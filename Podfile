@@ -1,0 +1,27 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'FSPA' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for FSPA
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Core'
+  pod 'FirebaseUI/Storage'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Database'
+  pod 'Firebase/Storage'
+  pod 'FirebaseUI/Auth'
+  pod 'FirebaseUI/Email'
+
+  target 'FSPATests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'FSPAUITests' do
+    # Pods for testing
+  end
+
+end
