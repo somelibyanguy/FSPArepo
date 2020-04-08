@@ -1,0 +1,6 @@
+framework module Pods_FSPA {
+  umbrella header "Pods-FSPA-umbrella.h"
+
+  export *
+  module * { export * }
+}

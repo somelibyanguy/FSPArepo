@@ -1,0 +1,6 @@
+framework module Pods_FSPA_FSPAUITests {
+  umbrella header "Pods-FSPA-FSPAUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
