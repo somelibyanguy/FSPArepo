@@ -3,18 +3,18 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		45ADDC6C9CD4D6AACB6BF8EC /* Pods_FSPA_FSPAUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8E491E895D88D04C323A8F0 /* Pods_FSPA_FSPAUITests.framework */; };
+		6469DD7424460E11007CBC89 /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6469DD7324460E11007CBC89 /* CustomColors.swift */; };
+		6469DD7624461ADD007CBC89 /* SectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6469DD7524461ADD007CBC89 /* SectionButton.swift */; };
+		64CE2EAA24439B0500EBE29C /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CE2EA924439B0500EBE29C /* HomeViewController.swift */; };
 		674E9E8E651F5DAD9D49DAEA /* Pods_FSPATests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 771D1814AA7B00D1B070EF90 /* Pods_FSPATests.framework */; };
 		CE14797EEB0A42F4DFD322AD /* Pods_FSPA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 429B2F88C1C4F39EBDA78A56 /* Pods_FSPA.framework */; };
 		F59CAF2D243E5E3E0033A283 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CAF2C243E5E3E0033A283 /* AppDelegate.swift */; };
 		F59CAF2F243E5E3E0033A283 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CAF2E243E5E3E0033A283 /* SceneDelegate.swift */; };
-		F59CAF31243E5E3E0033A283 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CAF30243E5E3E0033A283 /* ViewController.swift */; };
-		F59CAF34243E5E3E0033A283 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F59CAF32243E5E3E0033A283 /* Main.storyboard */; };
-		F59CAF37243E5E3E0033A283 /* FSPA.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F59CAF35243E5E3E0033A283 /* FSPA.xcdatamodeld */; };
 		F59CAF39243E5E430033A283 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F59CAF38243E5E430033A283 /* Assets.xcassets */; };
 		F59CAF3C243E5E430033A283 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F59CAF3A243E5E430033A283 /* LaunchScreen.storyboard */; };
 		F59CAF47243E5E430033A283 /* FSPATests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CAF46243E5E430033A283 /* FSPATests.swift */; };
@@ -42,6 +42,9 @@
 /* Begin PBXFileReference section */
 		36184D828FB038EAC8160769 /* Pods-FSPA.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPA.debug.xcconfig"; path = "Target Support Files/Pods-FSPA/Pods-FSPA.debug.xcconfig"; sourceTree = "<group>"; };
 		429B2F88C1C4F39EBDA78A56 /* Pods_FSPA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FSPA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6469DD7324460E11007CBC89 /* CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
+		6469DD7524461ADD007CBC89 /* SectionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionButton.swift; sourceTree = "<group>"; };
+		64CE2EA924439B0500EBE29C /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		69183ECCD8EC63653E43E183 /* Pods-FSPA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPA.release.xcconfig"; path = "Target Support Files/Pods-FSPA/Pods-FSPA.release.xcconfig"; sourceTree = "<group>"; };
 		771D1814AA7B00D1B070EF90 /* Pods_FSPATests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FSPATests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A95605FDA875B8A4257FD0AA /* Pods-FSPA-FSPAUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPA-FSPAUITests.debug.xcconfig"; path = "Target Support Files/Pods-FSPA-FSPAUITests/Pods-FSPA-FSPAUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -50,9 +53,6 @@
 		F59CAF29243E5E3E0033A283 /* FSPA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSPA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F59CAF2C243E5E3E0033A283 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F59CAF2E243E5E3E0033A283 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		F59CAF30243E5E3E0033A283 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		F59CAF33243E5E3E0033A283 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		F59CAF36243E5E3E0033A283 /* FSPA.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FSPA.xcdatamodel; sourceTree = "<group>"; };
 		F59CAF38243E5E430033A283 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F59CAF3B243E5E430033A283 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F59CAF3D243E5E430033A283 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -115,7 +115,6 @@
 				F249CA8FE30EAEE3127DF69B /* Pods-FSPATests.debug.xcconfig */,
 				E973E20EB6C021F4C6ED34BE /* Pods-FSPATests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -146,12 +145,12 @@
 			children = (
 				F59CAF2C243E5E3E0033A283 /* AppDelegate.swift */,
 				F59CAF2E243E5E3E0033A283 /* SceneDelegate.swift */,
-				F59CAF30243E5E3E0033A283 /* ViewController.swift */,
-				F59CAF32243E5E3E0033A283 /* Main.storyboard */,
+				6469DD7324460E11007CBC89 /* CustomColors.swift */,
+				6469DD7524461ADD007CBC89 /* SectionButton.swift */,
+				64CE2EA924439B0500EBE29C /* HomeViewController.swift */,
 				F59CAF38243E5E430033A283 /* Assets.xcassets */,
 				F59CAF3A243E5E430033A283 /* LaunchScreen.storyboard */,
 				F59CAF3D243E5E430033A283 /* Info.plist */,
-				F59CAF35243E5E3E0033A283 /* FSPA.xcdatamodeld */,
 				F59CAF5F243E5FA90033A283 /* GoogleService-Info.plist */,
 			);
 			path = FSPA;
@@ -289,7 +288,6 @@
 				F59CAF3C243E5E430033A283 /* LaunchScreen.storyboard in Resources */,
 				F59CAF60243E5FAA0033A283 /* GoogleService-Info.plist in Resources */,
 				F59CAF39243E5E430033A283 /* Assets.xcassets in Resources */,
-				F59CAF34243E5E3E0033A283 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -451,10 +449,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F59CAF31243E5E3E0033A283 /* ViewController.swift in Sources */,
 				F59CAF2D243E5E3E0033A283 /* AppDelegate.swift in Sources */,
+				6469DD7624461ADD007CBC89 /* SectionButton.swift in Sources */,
 				F59CAF2F243E5E3E0033A283 /* SceneDelegate.swift in Sources */,
-				F59CAF37243E5E3E0033A283 /* FSPA.xcdatamodeld in Sources */,
+				6469DD7424460E11007CBC89 /* CustomColors.swift in Sources */,
+				64CE2EAA24439B0500EBE29C /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,14 +489,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		F59CAF32243E5E3E0033A283 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F59CAF33243E5E3E0033A283 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		F59CAF3A243E5E430033A283 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -629,8 +620,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7P3V6PZ6DZ;
+				DEVELOPMENT_TEAM = 4VQFP5DX32;
 				INFOPLIST_FILE = FSPA/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -638,7 +630,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.PoppinSoftware.FSPA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -648,8 +640,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7P3V6PZ6DZ;
+				DEVELOPMENT_TEAM = 4VQFP5DX32;
 				INFOPLIST_FILE = FSPA/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -657,7 +650,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.PoppinSoftware.FSPA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -789,19 +782,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		F59CAF35243E5E3E0033A283 /* FSPA.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				F59CAF36243E5E3E0033A283 /* FSPA.xcdatamodel */,
-			);
-			currentVersion = F59CAF36243E5E3E0033A283 /* FSPA.xcdatamodel */;
-			path = FSPA.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = F59CAF21243E5E3E0033A283 /* Project object */;
 }
