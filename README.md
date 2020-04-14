@@ -1,2 +1,2 @@
-# FSPAREPO
+# FSPArepo
 Faculty Senate Passport App
