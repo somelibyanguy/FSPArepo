@@ -8,37 +8,37 @@
 
 import UIKit
 
-class SectionButton: UIView {
+enum Section: String {
     
-    var sectionButton: UIButton = UIButton()
+    case Announcements = "Announcements"
+    case ToDo = "To-Do"
+    case Members = "Members"
+    case Default = "Default"
     
-    lazy var sectionLabel: UILabel = {
-        
-        var sectionLabel = UILabel()
-        sectionLabel.text = "Section"
-        sectionLabel.textAlignment = .center
-        sectionLabel.textColor = UIColor.PrimaryCrimson
-        sectionLabel.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: UIFont.labelFontSize)!)
-        sectionLabel.adjustsFontForContentSizeCategory = true
-        return sectionLabel
-        
-    }()
+}
+
+final class SectionButton: UIButton {
     
-    var sectionVisibility = false {
+    let verticalEdgeInset: CGFloat = .getPercentageWidth(percentage: 2.7)
+    let horizontalEdgeInset: CGFloat = .getPercentageWidth(percentage: 5.7)
+    
+    lazy private(set) var section: Section = .Default
+    
+    private(set) var isVisible = false {
         
         willSet (newVisibility) {
             
-            if sectionVisibility != newVisibility {
+            if isVisible != newVisibility {
                 
                 if newVisibility { // Section is now visible:
                     
                     self.backgroundColor = UIColor.PrimaryCrimson
-                    sectionLabel.textColor = UIColor.AnalCream
+                    self.setTitleColor(.AnalCream, for: .normal)
                     
                 } else { // Section is now hidden:
                     
                     self.backgroundColor = UIColor.AnalCream
-                    sectionLabel.textColor = UIColor.PrimaryCrimson
+                    self.setTitleColor(.PrimaryCrimson, for: .normal)
                     
                 }
                 
@@ -48,9 +48,17 @@ class SectionButton: UIView {
         
     }
     
-    override init(frame: CGRect) {
+    convenience init() {
         
-        super.init(frame: frame)
+        self.init(section: nil)
+        
+    }
+    
+    init(section: Section?) {
+        
+        super.init(frame: .zero)
+        
+        if let newSection = section { self.section = newSection }
         setupView()
         
     }
@@ -64,22 +72,52 @@ class SectionButton: UIView {
     
     private func setupView() {
         
-        self.backgroundColor = UIColor.AnalCream
+        backgroundColor = UIColor.AnalCream
+        setTitle(section.rawValue, for: .normal)
+        setTitleColor(.PrimaryCrimson, for: .normal)
+        titleLabel!.textAlignment = .center
+        titleLabel!.font = UIFont(name: "HelveticaNeue-Bold", size: .getWidthFitSize(minSize: 14.0, maxSize: 19.0))
         
-        self.addSubview(sectionButton)
-        sectionButton.translatesAutoresizingMaskIntoConstraints = false
-        sectionButton.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        sectionButton.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        sectionButton.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        sectionButton.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        translatesAutoresizingMaskIntoConstraints = false
+        heightAnchor.constraint(equalToConstant: titleLabel!.intrinsicContentSize.height + verticalEdgeInset*2).isActive = true
         
-        self.addSubview(sectionLabel)
-        self.sendSubviewToBack(sectionLabel)
-        sectionLabel.translatesAutoresizingMaskIntoConstraints = false
-        sectionLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: UIScreen.main.bounds.height*(1/70)).isActive = true
-        sectionLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -UIScreen.main.bounds.height*(1/70)).isActive = true
-        sectionLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        sectionLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+    }
+    
+    func setVisibility(isVisible: Bool) {
+        
+        self.isVisible = isVisible
+        
+    }
+    
+    func setSection(newSection: Section) {
+        
+        self.section = newSection
+        
+    }
+    
+    override func layoutSubviews() {
+        
+        super.layoutSubviews()
+        
+        switch section {
+            
+        case .Announcements:
+            
+            addShadowAndRoundCorners(shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 2.0), topRightMask: false, topLeftMask: false, bottomRightMask: false)
+            
+        case .ToDo:
+            
+            addShadowAndRoundCorners(cornerRadius: 0.0, shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 2.0))
+            
+        case .Members:
+            
+            addShadowAndRoundCorners(shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 2.0), topRightMask: false, topLeftMask: false, bottomLeftMask: false)
+            
+        case .Default:
+            
+            addShadowAndRoundCorners(cornerRadius: 0.0, shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 2.0))
+            
+        }
         
     }
     

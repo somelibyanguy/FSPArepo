@@ -20,23 +20,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Override point for customization after application launch.
         
-        window = UIWindow(frame: UIScreen.main.bounds)
-        
-        if let window = window {
+        if #available(iOS 13.0, *) {
             
-            let homeVC = HomeViewController()
+            FirebaseApp.configure()
             
-            navigationController = UINavigationController(rootViewController: homeVC)
+        } else {
             
-            navigationController?.setNavigationBarHidden(true, animated: false)
+            window = UIWindow(frame: UIScreen.main.bounds)
             
-            window.rootViewController = navigationController
+            if let window = window {
+                
+                let homeVC = HomeViewController()
+                
+                navigationController = UINavigationController(rootViewController: homeVC)
+                
+                navigationController?.setNavigationBarHidden(true, animated: false)
+                
+                window.rootViewController = navigationController
+                
+                window.makeKeyAndVisible()
+                
+            }
             
-            window.makeKeyAndVisible()
+            FirebaseApp.configure()
             
         }
-        
-        FirebaseApp.configure()
         
         return true
         

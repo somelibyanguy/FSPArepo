@@ -8,9 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		45ADDC6C9CD4D6AACB6BF8EC /* Pods_FSPA_FSPAUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8E491E895D88D04C323A8F0 /* Pods_FSPA_FSPAUITests.framework */; };
-		6469DD7424460E11007CBC89 /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6469DD7324460E11007CBC89 /* CustomColors.swift */; };
+		6418747C2460C7CF00C4D3AD /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6418747B2460C7CF00C4D3AD /* Extensions.swift */; };
+		6418747E2461A58000C4D3AD /* BouncyButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6418747D2461A58000C4D3AD /* BouncyButtons.swift */; };
+		641874802461A67D00C4D3AD /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6418747F2461A67D00C4D3AD /* SearchBar.swift */; };
 		6469DD7624461ADD007CBC89 /* SectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6469DD7524461ADD007CBC89 /* SectionButton.swift */; };
+		649DED11244B2BE5000E983D /* TabNavigationCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649DED10244B2BE5000E983D /* TabNavigationCollectionView.swift */; };
 		64CE2EAA24439B0500EBE29C /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CE2EA924439B0500EBE29C /* HomeViewController.swift */; };
+		64F45A40246DA1BA0011A123 /* TextAttributesBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F45A3F246DA1BA0011A123 /* TextAttributesBarView.swift */; };
+		64F83E9B2465890600705755 /* AnnouncementsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F83E9A2465890600705755 /* AnnouncementsPageViewController.swift */; };
 		674E9E8E651F5DAD9D49DAEA /* Pods_FSPATests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 771D1814AA7B00D1B070EF90 /* Pods_FSPATests.framework */; };
 		CE14797EEB0A42F4DFD322AD /* Pods_FSPA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 429B2F88C1C4F39EBDA78A56 /* Pods_FSPA.framework */; };
 		F59CAF2D243E5E3E0033A283 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CAF2C243E5E3E0033A283 /* AppDelegate.swift */; };
@@ -42,9 +47,14 @@
 /* Begin PBXFileReference section */
 		36184D828FB038EAC8160769 /* Pods-FSPA.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPA.debug.xcconfig"; path = "Target Support Files/Pods-FSPA/Pods-FSPA.debug.xcconfig"; sourceTree = "<group>"; };
 		429B2F88C1C4F39EBDA78A56 /* Pods_FSPA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FSPA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6469DD7324460E11007CBC89 /* CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
+		6418747B2460C7CF00C4D3AD /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		6418747D2461A58000C4D3AD /* BouncyButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BouncyButtons.swift; sourceTree = "<group>"; };
+		6418747F2461A67D00C4D3AD /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		6469DD7524461ADD007CBC89 /* SectionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionButton.swift; sourceTree = "<group>"; };
+		649DED10244B2BE5000E983D /* TabNavigationCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigationCollectionView.swift; sourceTree = "<group>"; };
 		64CE2EA924439B0500EBE29C /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		64F45A3F246DA1BA0011A123 /* TextAttributesBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextAttributesBarView.swift; sourceTree = "<group>"; };
+		64F83E9A2465890600705755 /* AnnouncementsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementsPageViewController.swift; sourceTree = "<group>"; };
 		69183ECCD8EC63653E43E183 /* Pods-FSPA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPA.release.xcconfig"; path = "Target Support Files/Pods-FSPA/Pods-FSPA.release.xcconfig"; sourceTree = "<group>"; };
 		771D1814AA7B00D1B070EF90 /* Pods_FSPATests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FSPATests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A95605FDA875B8A4257FD0AA /* Pods-FSPA-FSPAUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPA-FSPAUITests.debug.xcconfig"; path = "Target Support Files/Pods-FSPA-FSPAUITests/Pods-FSPA-FSPAUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -145,9 +155,14 @@
 			children = (
 				F59CAF2C243E5E3E0033A283 /* AppDelegate.swift */,
 				F59CAF2E243E5E3E0033A283 /* SceneDelegate.swift */,
-				6469DD7324460E11007CBC89 /* CustomColors.swift */,
 				6469DD7524461ADD007CBC89 /* SectionButton.swift */,
+				6418747D2461A58000C4D3AD /* BouncyButtons.swift */,
+				64F45A3F246DA1BA0011A123 /* TextAttributesBarView.swift */,
+				6418747F2461A67D00C4D3AD /* SearchBar.swift */,
+				6418747B2460C7CF00C4D3AD /* Extensions.swift */,
+				649DED10244B2BE5000E983D /* TabNavigationCollectionView.swift */,
 				64CE2EA924439B0500EBE29C /* HomeViewController.swift */,
+				64F83E9A2465890600705755 /* AnnouncementsPageViewController.swift */,
 				F59CAF38243E5E430033A283 /* Assets.xcassets */,
 				F59CAF3A243E5E430033A283 /* LaunchScreen.storyboard */,
 				F59CAF3D243E5E430033A283 /* Info.plist */,
@@ -449,10 +464,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64F45A40246DA1BA0011A123 /* TextAttributesBarView.swift in Sources */,
+				649DED11244B2BE5000E983D /* TabNavigationCollectionView.swift in Sources */,
+				64F83E9B2465890600705755 /* AnnouncementsPageViewController.swift in Sources */,
 				F59CAF2D243E5E3E0033A283 /* AppDelegate.swift in Sources */,
 				6469DD7624461ADD007CBC89 /* SectionButton.swift in Sources */,
+				6418747E2461A58000C4D3AD /* BouncyButtons.swift in Sources */,
+				6418747C2460C7CF00C4D3AD /* Extensions.swift in Sources */,
+				641874802461A67D00C4D3AD /* SearchBar.swift in Sources */,
 				F59CAF2F243E5E3E0033A283 /* SceneDelegate.swift in Sources */,
-				6469DD7424460E11007CBC89 /* CustomColors.swift in Sources */,
 				64CE2EAA24439B0500EBE29C /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
