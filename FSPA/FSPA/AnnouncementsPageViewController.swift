@@ -10,9 +10,9 @@ import UIKit
 
 struct Announcement {
     
-    var image: UIImage?
-    var title: String?
-    var body: NSAttributedString?
+    var image: UIImage = UIImage.defaultAnnouncementsImage
+    var title: String = "Title Text Placeholder"
+    var body: NSAttributedString = NSAttributedString(string: "Body Text Placeholder", attributes: [NSAttributedString.Key.font : UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline).pointSize)!)])
     
 }
 
@@ -21,7 +21,12 @@ final class AnnouncementsPageViewController: UIViewController {
     let horizontalEdgeInset: CGFloat = .getPercentageWidth(percentage: 4)
     let verticalEdgeInset: CGFloat = .getPercentageWidth(percentage: 4)
     
+    private var currentAnnouncement: Announcement = Announcement()
+    private var imageWasChanged = false
+    
     lazy private(set) var imagePicker: UIImagePickerController = UIImagePickerController()
+    var completionHandler: ((UIImage?, String?, NSAttributedString?, Bool?, Bool?, Bool?) -> Void)?
+    
     lazy private var tapOutGesture: UITapGestureRecognizer = {
         
         var tapOutGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboardOnTapOut))
@@ -118,7 +123,7 @@ final class AnnouncementsPageViewController: UIViewController {
     
     lazy private var announcementImageView: EditableImageView = {
         
-        var announcementImageView = EditableImageView(editableImage: UIImage.defaultAnnouncementsImage)
+        var announcementImageView = EditableImageView(editableImage: currentAnnouncement.image)
         announcementImageView.addShadowAndRoundCorners(cornerRadius: 0.0, shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 1.0))
         announcementImageView.innerEditingButton.addTarget(self, action: #selector(editImage(sender:)), for: .touchUpInside)
         
@@ -146,7 +151,7 @@ final class AnnouncementsPageViewController: UIViewController {
         
         var announcementTitleTextView = UITextView()
         announcementTitleTextView.font = UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title3).pointSize)!)
-        announcementTitleTextView.text = "Title Text Placeholder"
+        announcementTitleTextView.text = currentAnnouncement.title
         announcementTitleTextView.textAlignment = .left
         announcementTitleTextView.sizeToFit()
         announcementTitleTextView.isScrollEnabled = false
@@ -161,7 +166,7 @@ final class AnnouncementsPageViewController: UIViewController {
     lazy private var announcementBodyTextView: AttributedTextView = {
         
         var announcementBodyTextView = AttributedTextView()
-        announcementBodyTextView.text = "Body Text Placeholder"
+        announcementBodyTextView.attributedText = currentAnnouncement.body
         announcementBodyTextView.delegate = self
         return announcementBodyTextView
         
@@ -197,17 +202,16 @@ final class AnnouncementsPageViewController: UIViewController {
     
     convenience init() {
         
-        self.init(announcement: Announcement(image: nil, title: nil, body: nil))
+        self.init(announcement: nil, completionHandler: nil)
         
     }
     
-    init(announcement: Announcement) {
+    init(announcement: Announcement?, completionHandler: ((UIImage?, String?, NSAttributedString?, Bool?, Bool?, Bool?) -> Void)?) {
         
         super.init(nibName: nil, bundle: nil)
         
-        if let newAnnouncementImage = announcement.image { announcementImageView.innerImageView.image = newAnnouncementImage }
-        if let newAnnouncementTitle = announcement.title { announcementTitleTextView.text = newAnnouncementTitle }
-        if let newannouncementBody = announcement.body { announcementBodyTextView.attributedText = newannouncementBody }
+        if let newAnnouncement = announcement { currentAnnouncement = newAnnouncement }
+        if let newCompletionHandler = completionHandler { self.completionHandler = newCompletionHandler }
         
     }
     
@@ -351,6 +355,7 @@ final class AnnouncementsPageViewController: UIViewController {
             
             alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
                 
+                self.completionHandler?(nil, nil, nil, nil, nil, false)
                 self.navigationController?.popViewController(animated: true)
                 
             }))
@@ -359,6 +364,15 @@ final class AnnouncementsPageViewController: UIViewController {
             
         } else {
             
+            var imageToReturn: UIImage?
+            var titleToReturn: String?
+            var bodyToReturn: NSAttributedString?
+            
+            if imageWasChanged { imageToReturn = announcementImageView.innerImageView.image }
+            if currentAnnouncement.title != announcementTitleTextView.text { titleToReturn = announcementTitleTextView.text }
+            if !currentAnnouncement.body.isEqual(to: announcementBodyTextView.attributedText) { bodyToReturn = announcementBodyTextView.attributedText}
+            
+            completionHandler?(imageToReturn, titleToReturn, bodyToReturn, nil, nil, false)
             navigationController?.popViewController(animated: true)
             
         }
@@ -550,8 +564,7 @@ final class AnnouncementsPageViewController: UIViewController {
         
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
             
-            // Future Action
-            
+            self.completionHandler?(nil, nil, nil, nil, nil, true)
             self.navigationController?.popViewController(animated: true)
             
         }))
@@ -569,6 +582,7 @@ extension AnnouncementsPageViewController: UIImagePickerControllerDelegate, UINa
         imagePicker.dismiss(animated: true, completion: nil)
         let cameraImage = info[.editedImage] as? UIImage
         announcementImageView.innerImageView.image = cameraImage
+        imageWasChanged = true
         
     }
     
@@ -1341,3 +1355,4 @@ final class AttributedTextView: UITextView {
     }
     
 }
+
