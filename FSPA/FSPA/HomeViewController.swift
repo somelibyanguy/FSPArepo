@@ -261,40 +261,44 @@ final class HomeViewController: UIViewController {
         
     }
     
-    public func initialiseWorkspace(){
-         let ref = Database.database().reference()
-         let uid = Auth.auth().currentUser!.uid
-         var isAdmin = Bool()
-         ref.child("users/\(uid)/currentWorkspace").observeSingleEvent(of: .value, with: { (snapshot) in
-             // Get user value
-             let value = snapshot.value as? String
-             
-             let currentWorkspace = value
-             if(currentWorkspace != ""){
-                 
-                 print(currentWorkspace)
-                 
-                 ref.child("users/\(uid)/workspaces/\(currentWorkspace!)").observeSingleEvent(of: .value, with: { (snapshot) in
-                     let value = snapshot.value as! [String: Any]
-                     
-                     isAdmin = value["isAdmin"] as! Bool
-                     if(isAdmin){
+    public func initialiseWorkspace() {
+        
+        let ref = Database.database().reference()
+        let uid = Auth.auth().currentUser!.uid
+        var isAdmin = Bool()
+        
+        ref.child("users/\(uid)/currentWorkspace").observeSingleEvent(of: .value, with: { (snapshot) in
+            // Get user value
+            let value = snapshot.value as? String
+            
+            let currentWorkspace = value
+            if(currentWorkspace != ""){
+                
+                print(currentWorkspace)
+                
+                ref.child("users/\(uid)/workspaces/\(currentWorkspace!)").observeSingleEvent(of: .value, with: { (snapshot) in
+                    let value = snapshot.value as! [String: Any]
+                    
+                    isAdmin = value["isAdmin"] as! Bool
+                    if(isAdmin){
                         // self.editButton.isHidden = false
-                     }else{
+                    }else{
                         // self.editButton.isHidden = true
-                     }
-                     
-                 }) { (error) in
-                     print(error.localizedDescription)
-                 }
-             }
-         }) { (error) in
-             print(error.localizedDescription)
-         }
-         
-     }
+                    }
+                    
+                }) { (error) in
+                    print(error.localizedDescription)
+                }
+            }
+            
+        }) { (error) in
+            print(error.localizedDescription)
+        }
+        
+    }
     
     @IBAction func editWorkspace( sender: Any) {
+        
         guard let window = self.view.window else {
             
             return
@@ -342,57 +346,55 @@ final class HomeViewController: UIViewController {
         
     }
     
+    override func viewDidLayoutSubviews() {
+        
+        super.viewDidLayoutSubviews()
+        
+        let gradientMaskLayer = CAGradientLayer()
+        gradientMaskLayer.frame = edgeFadeView.bounds
+        
+        gradientMaskLayer.colors =  [UIColor.BgGray.withAlphaComponent(0.0).cgColor, UIColor.BgGray.withAlphaComponent(1.0).cgColor]
+        gradientMaskLayer.locations = [0.0, 1.0]
+        
+        edgeFadeView.layer.mask = gradientMaskLayer
+        
+    }
     
-    
-
-
-override func viewDidLayoutSubviews() {
-    
-    super.viewDidLayoutSubviews()
-    
-    let gradientMaskLayer = CAGradientLayer()
-    gradientMaskLayer.frame = edgeFadeView.bounds
-    
-    gradientMaskLayer.colors =  [UIColor.BgGray.withAlphaComponent(0.0).cgColor, UIColor.BgGray.withAlphaComponent(1.0).cgColor]
-    gradientMaskLayer.locations = [0.0, 1.0]
-    
-    edgeFadeView.layer.mask = gradientMaskLayer
-    
-}
-
     @objc private func switchSection(sender: SectionButton) {
-    
-    if !sender.isVisible {
         
         if !sender.isVisible {
             
-            switch sender.section {
+            if !sender.isVisible {
                 
-            case .Announcements:
-                
-                announcementsButton.setVisibility(isVisible: true)
-                toDoButton.setVisibility(isVisible: false)
-                membersButton.setVisibility(isVisible: false)
-                
-                tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .centeredHorizontally, animated: true)
-                
-            case .ToDo:
-                
-                toDoButton.setVisibility(isVisible: true)
-                announcementsButton.setVisibility(isVisible: false)
-                membersButton.setVisibility(isVisible: false)
-                
-                tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 1, section: 0), at: .centeredHorizontally, animated: true)
-                
-            case .Members:
-                
-                membersButton.setVisibility(isVisible: true)
-                announcementsButton.setVisibility(isVisible: false)
-                toDoButton.setVisibility(isVisible: false)
-                
-                tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: true)
-                
-            case .Default: print("ERROR: Trying to switch to Default Section.")
+                switch sender.section {
+                    
+                case .Announcements:
+                    
+                    announcementsButton.setVisibility(isVisible: true)
+                    toDoButton.setVisibility(isVisible: false)
+                    membersButton.setVisibility(isVisible: false)
+                    
+                    tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .centeredHorizontally, animated: true)
+                    
+                case .ToDo:
+                    
+                    toDoButton.setVisibility(isVisible: true)
+                    announcementsButton.setVisibility(isVisible: false)
+                    membersButton.setVisibility(isVisible: false)
+                    
+                    tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 1, section: 0), at: .centeredHorizontally, animated: true)
+                    
+                case .Members:
+                    
+                    membersButton.setVisibility(isVisible: true)
+                    announcementsButton.setVisibility(isVisible: false)
+                    toDoButton.setVisibility(isVisible: false)
+                    
+                    tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: true)
+                    
+                case .Default: print("ERROR: Trying to switch to Default Section.")
+                    
+                }
                 
             }
             
@@ -423,20 +425,18 @@ override func viewDidLayoutSubviews() {
         
     }
     
-}
-
-@objc private func segueToCalendar (sender: UIButton) {
+    @objc private func segueToCalendar (sender: UIButton) {
+        
+        print("Seguing to Calendar")
+        
+    }
     
-    print("Seguing to Calendar")
+    @objc private func closeSearchBar (sender: UIButton) {
+        
+        searchBar.endEditing(true)
+        
+    }
     
-}
-
-@objc private func closeSearchBar (sender: UIButton) {
-    
-    searchBar.endEditing(true)
-    
-}
-
 }
 
 extension HomeViewController: UISearchBarDelegate {
@@ -779,140 +779,8 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             }
             
         }
+        
     }
-        
-        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            
-            if let tabCollectionView = collectionView as? TabCollectionView, tabCollectionView.section == .Announcements {
-                
-                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[indexPath.item])
-                navigationController?.pushViewController(announcementsPageVC, animated: true)
-                
-            }
-            
-        }
-        
-        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-            
-            if collectionView is TabNavigationCollectionView {
-                
-                return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
-                
-            } else {
-                
-                return CGSize(width: 0.0, height: 0.0)
-                
-            }
-            
-        }
-        
-        func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-            
-            if scrollView is TabNavigationCollectionView {
-                
-                let index = Int(targetContentOffset.pointee.x / view.frame.width)
-                
-                if index != currentPage {
-                    
-                    switch index {
-                        
-                    case 0:
-                        
-                        switchSection(sender: announcementsButton)
-                        currentPage = 0
-                        
-                    case 1:
-                        
-                        switchSection(sender: toDoButton)
-                        currentPage = 1
-                        
-                    case 2:
-                        
-                        switchSection(sender: membersButton)
-                        currentPage = 2
-                        
-                    default: print("ERROR: ScrollView index is out bounds. Rejecting Change.")
-                        
-                    }
-                    
-                }
-                
-            }
-            
-        }
-        
-        func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-            
-            if collectionView is TabCollectionView {
-                
-                let item = toDoList[indexPath.row]
-                let itemProvider = NSItemProvider(object: item as NSString)
-                let dragItem = UIDragItem(itemProvider: itemProvider)
-                dragItem.localObject = item
-                return [dragItem]
-                
-            } else {
-                
-                return []
-                
-            }
-            
-        }
-        
-        func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
-            
-            if collectionView is TabCollectionView, collectionView.hasActiveDrag {
-                
-                return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-                
-            }
-            
-            return UICollectionViewDropProposal(operation: .forbidden)
-            
-        }
-        
-        func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-            
-            if collectionView is TabCollectionView {
-                
-                var destinationIndexPath: IndexPath
-                
-                if let indexPath = coordinator.destinationIndexPath {
-                    
-                    destinationIndexPath = indexPath
-                    
-                } else {
-                    
-                    let row = collectionView.numberOfItems(inSection: 0)
-                    destinationIndexPath = IndexPath(item: row - 1, section: 0)
-                    
-                }
-                
-                if coordinator.proposal.operation == .move {
-                    
-                    if let item = coordinator.items.first, let sourceIndexPath = item.sourceIndexPath {
-                        
-                        collectionView.performBatchUpdates({
-                            
-                            self.toDoList.remove(at: sourceIndexPath.item)
-                            self.toDoList.insert(item.dragItem.localObject as! String, at: destinationIndexPath.item)
-                            
-                            collectionView.deleteItems(at: [sourceIndexPath])
-                            collectionView.insertItems(at: [destinationIndexPath])
-                            
-                        }, completion: nil)
-                        
-                        coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
-                        
-                    }
-                    
-                    
-                    
-                }
-                
-            }
-    
-        }
 
 }
 
