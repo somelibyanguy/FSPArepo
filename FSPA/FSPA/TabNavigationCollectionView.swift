@@ -94,7 +94,7 @@ final class TabCollectionView: UICollectionView {
     
     init(section: Section?) {
         
-        let tabCollectionViewLayout = UICollectionViewFlowLayout()
+        let tabCollectionViewLayout = DynamicHeightFlowLayout()
         tabCollectionViewLayout.minimumLineSpacing = verticalEdgeInset
         tabCollectionViewLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         tabCollectionViewLayout.sectionInset = UIEdgeInsets(top: verticalEdgeInset, left: horizontalEdgeInset, bottom: verticalEdgeInset, right: horizontalEdgeInset)
@@ -199,10 +199,6 @@ final class AnnouncementsCell: UICollectionViewCell {
         contentView.addShadowAndRoundCorners(shadowOffset: CGSize(width: 0.0, height: 0.0), shadowOpacity: 0.2, shadowRadius: 8.0)
         contentView.backgroundColor = .white
         
-        contentView.frame = self.bounds
-        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - horizontalEdgeInset*2).isActive = true
-        
         contentView.addSubview(announcementsImageView)
         announcementsImageView.translatesAutoresizingMaskIntoConstraints = false
         announcementsImageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
@@ -217,6 +213,15 @@ final class AnnouncementsCell: UICollectionViewCell {
         announcementsLabelsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -horizontalEdgeInset).isActive = true
         announcementsLabelsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -verticalEdgeInset).isActive = true
        
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        
+        let layoutAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+        layoutIfNeeded()
+        layoutAttributes.frame.size = systemLayoutSizeFitting(UIView.layoutFittingCompressedSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        return layoutAttributes
+        
     }
     
 }
@@ -329,10 +334,6 @@ final class ToDoCell: UICollectionViewCell {
         contentView.addShadowAndRoundCorners(shadowOffset: CGSize(width: 0.0, height: 0.0), shadowOpacity: 0.2, shadowRadius: 8.0)
         contentView.backgroundColor = .PrimaryCrimson
         
-        contentView.frame = self.bounds
-        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - horizontalEdgeInset*2).isActive = true
-        
         contentView.addSubview(toDoCheckBoxView)
         toDoCheckBoxView.translatesAutoresizingMaskIntoConstraints = false
         toDoCheckBoxView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
@@ -364,6 +365,15 @@ final class ToDoCell: UICollectionViewCell {
     func setToDoDeadline(deadline: String) {
         
         toDoDeadlineLabel.text = "Deadline " + deadline
+        
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        
+        let layoutAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+        layoutIfNeeded()
+        layoutAttributes.frame.size = systemLayoutSizeFitting(UIView.layoutFittingCompressedSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        return layoutAttributes
         
     }
     
@@ -480,10 +490,6 @@ final class MembersCell: UICollectionViewCell {
         contentView.addShadowAndRoundCorners()
         contentView.backgroundColor = UIColor.PrimaryCrimson
         
-        contentView.frame = self.bounds
-        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - horizontalEdgeInset*2).isActive = true
-        
         contentView.addSubview(membersImageView)
         membersImageView.translatesAutoresizingMaskIntoConstraints = false
         membersImageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
@@ -503,6 +509,15 @@ final class MembersCell: UICollectionViewCell {
     func toggleMembers(isHighlighted: Bool) {
         
         self.membersIsHighlighted = isHighlighted
+        
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        
+        let layoutAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+        layoutIfNeeded()
+        layoutAttributes.frame.size = systemLayoutSizeFitting(UIView.layoutFittingCompressedSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        return layoutAttributes
         
     }
     
@@ -544,11 +559,6 @@ final class DefaultCell: UICollectionViewCell {
         
         contentView.addShadowAndRoundCorners(shadowOffset: CGSize(width: 0.0, height: 0.0), shadowOpacity: 0.2, shadowRadius: 8.0)
         
-        contentView.frame = self.bounds
-        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - horizontalEdgeInset*2).isActive = true
-        contentView.heightAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
-        
         contentView.addSubview(defaultLabel)
         defaultLabel.translatesAutoresizingMaskIntoConstraints = false
         defaultLabel.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
@@ -556,10 +566,57 @@ final class DefaultCell: UICollectionViewCell {
         defaultLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         defaultLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        
+        let layoutAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+        layoutIfNeeded()
+        layoutAttributes.frame.size = systemLayoutSizeFitting(UIView.layoutFittingCompressedSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        return layoutAttributes
         
     }
     
 }
+
+final class DynamicHeightFlowLayout: UICollectionViewFlowLayout {
+
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        
+        let layoutAttributesObjects = super.layoutAttributesForElements(in: rect)?.map{ $0.copy() } as? [UICollectionViewLayoutAttributes]
+        
+        layoutAttributesObjects?.forEach({ layoutAttributes in
+            
+            if layoutAttributes.representedElementCategory == .cell {
+                
+                if let newFrame = layoutAttributesForItem(at: layoutAttributes.indexPath)?.frame {
+                    
+                    layoutAttributes.frame = newFrame
+                    
+                }
+                
+            }
+            
+        })
+        
+        return layoutAttributesObjects
+        
+    }
+
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        
+        guard let collectionView = collectionView else { fatalError() }
+        
+        guard let layoutAttributes = super.layoutAttributesForItem(at: indexPath)?.copy() as? UICollectionViewLayoutAttributes else { return nil }
+
+        layoutAttributes.frame.origin.x = sectionInset.left
+        layoutAttributes.frame.size.width = collectionView.safeAreaLayoutGuide.layoutFrame.width - sectionInset.left - sectionInset.right
+        return layoutAttributes
+        
+    }
+
+}
+
 
 
 

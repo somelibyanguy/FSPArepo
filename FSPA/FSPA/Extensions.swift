@@ -11,13 +11,13 @@ import MapKit
 
 extension UIColor {
     
-    static let AnalCream = UIColor(named: "AnalCream")!
-    static let AnalDarkCrimson = UIColor(named: "AnalDarkCrimson")!
-    static let AnalGold = UIColor(named: "AnalGold")!
-    static let BgGray = UIColor(named: "BgGray")!
-    static let BgLightCream = UIColor(named: "BgLightCream")!
-    static let PrimaryBrown = UIColor(named: "PrimaryBrown")!
-    static let PrimaryCrimson = UIColor(named: "PrimaryCrimson")!
+    static let AnalCream: UIColor = UIColor(named: "AnalCream")!
+    static let AnalDarkCrimson: UIColor = UIColor(named: "AnalDarkCrimson")!
+    static let AnalGold: UIColor = UIColor(named: "AnalGold")!
+    static let BgGray: UIColor = UIColor(named: "BgGray")!
+    static let BgLightCream: UIColor = UIColor(named: "BgLightCream")!
+    static let PrimaryBrown: UIColor = UIColor(named: "PrimaryBrown")!
+    static let PrimaryCrimson: UIColor = UIColor(named: "PrimaryCrimson")!
     
     static func UIColorFromHex(rgbValue: UInt32, alpha: Double = 1.0) -> UIColor {
         
@@ -35,28 +35,29 @@ extension UIColor {
 
 extension UIImage {
     
-    static let calendarIcon = UIImage(named: "calendarIcon")!
-    static let checkMarkIcon = UIImage(named: "checkMarkIcon")!
-    static let defaultMembersProfileImage = UIImage(named: "defaultMembersProfileImage")!
-    static let defaultAnnouncementsImage = UIImage(named: "defaultAnnouncementsImage")!
-    static let closeXMarkIcon = UIImage(named: "closeXMarkIcon")!
-    static let editPencilIcon = UIImage(named: "editPencilIcon")!
-    static let notVisibleEyeIcon = UIImage(named: "notVisibleEyeIcon")!
-    static let pinIcon = UIImage(named: "pinIcon")!
-    static let unpinIcon = UIImage(named: "unpinIcon")!
-    static let visibleEyeIcon = UIImage(named: "visibleEyeIcon")!
-    static let deleteIcon = UIImage(named: "deleteIcon")!
-    static let boldTextIcon = UIImage(named: "boldTextIcon")!
-    static let italicTextIcon = UIImage(named: "italicTextIcon")!
-    static let underlineTextIcon = UIImage(named: "underlineTextIcon")!
-    static let strikeTextIcon = UIImage(named: "strikeTextIcon")!
-    static let highlightTextIcon = UIImage(named: "highlightTextIcon")!
-    static let alignTextLeftIcon = UIImage(named: "alignTextLeftIcon")!
-    static let alignTextCenterIcon = UIImage(named: "alignTextCenterIcon")!
-    static let alignTextRightIcon = UIImage(named: "alignTextRightIcon")!
-    static let increaseIndentIcon = UIImage(named: "increaseIndentIcon")!
-    static let decreaseIndentIcon = UIImage(named: "decreaseIndentIcon")!
-    static let announcementsCollectionViewPlaceholder = UIImage(named: "announcementsCollectionViewPlaceholder")!
+    static let calendarIcon: UIImage = UIImage(named: "calendarIcon")!
+    static let checkMarkIcon: UIImage = UIImage(named: "checkMarkIcon")!
+    static let defaultMembersProfileImage: UIImage = UIImage(named: "defaultMembersProfileImage")!
+    static let defaultAnnouncementsImage: UIImage = UIImage(named: "defaultAnnouncementsImage")!
+    static let closeXMarkIcon: UIImage = UIImage(named: "closeXMarkIcon")!
+    static let editPencilIcon: UIImage = UIImage(named: "editPencilIcon")!
+    static let notVisibleEyeIcon: UIImage = UIImage(named: "notVisibleEyeIcon")!
+    static let pinIcon: UIImage = UIImage(named: "pinIcon")!
+    static let unpinIcon: UIImage = UIImage(named: "unpinIcon")!
+    static let visibleEyeIcon: UIImage = UIImage(named: "visibleEyeIcon")!
+    static let deleteIcon: UIImage = UIImage(named: "deleteIcon")!
+    static let boldTextIcon: UIImage = UIImage(named: "boldTextIcon")!
+    static let italicTextIcon: UIImage = UIImage(named: "italicTextIcon")!
+    static let underlineTextIcon: UIImage = UIImage(named: "underlineTextIcon")!
+    static let strikeTextIcon: UIImage = UIImage(named: "strikeTextIcon")!
+    static let highlightTextIcon: UIImage = UIImage(named: "highlightTextIcon")!
+    static let alignTextLeftIcon: UIImage = UIImage(named: "alignTextLeftIcon")!
+    static let alignTextCenterIcon: UIImage = UIImage(named: "alignTextCenterIcon")!
+    static let alignTextRightIcon: UIImage = UIImage(named: "alignTextRightIcon")!
+    static let increaseIndentIcon: UIImage = UIImage(named: "increaseIndentIcon")!
+    static let decreaseIndentIcon: UIImage = UIImage(named: "decreaseIndentIcon")!
+    static let announcementsCollectionViewPlaceholder: UIImage = UIImage(named: "announcementsCollectionViewPlaceholder")!
+    static let addPlusIcon: UIImage = UIImage(named: "addPlusIcon")!
     
 }
 
