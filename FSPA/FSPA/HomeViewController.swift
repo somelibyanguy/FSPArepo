@@ -68,7 +68,7 @@ final class HomeViewController: UIViewController {
     }()
     
     lazy private(set) var searchBar: SearchBar = {
-    
+        
         var searchBar = SearchBar(tintColor: .gray)
         searchBar.delegate = self
         searchBar.accessibilityIdentifier = "homeVC/searchBar"
@@ -124,7 +124,7 @@ final class HomeViewController: UIViewController {
             if(snapshot.key == "currentWorkspace"){
                 self.initialiseWorkspace()
             }
-           }
+        }
         
         
         SideMenuManager.default.addPanGestureToPresent(toView: navigationController!.navigationBar)
@@ -242,76 +242,161 @@ final class HomeViewController: UIViewController {
         
     }
     
-    override func viewDidLayoutSubviews() {
+    public func initialiseWorkspace(){
+         let ref = Database.database().reference()
+         let uid = Auth.auth().currentUser!.uid
+         var isAdmin = Bool()
+         ref.child("users/\(uid)/currentWorkspace").observeSingleEvent(of: .value, with: { (snapshot) in
+             // Get user value
+             let value = snapshot.value as? String
+             
+             let currentWorkspace = value
+             if(currentWorkspace != ""){
+                 
+                 print(currentWorkspace)
+                 
+                 ref.child("users/\(uid)/workspaces/\(currentWorkspace!)").observeSingleEvent(of: .value, with: { (snapshot) in
+                     let value = snapshot.value as! [String: Any]
+                     
+                     isAdmin = value["isAdmin"] as! Bool
+                     if(isAdmin){
+                        // self.editButton.isHidden = false
+                     }else{
+                        // self.editButton.isHidden = true
+                     }
+                     
+                 }) { (error) in
+                     print(error.localizedDescription)
+                 }
+             }
+         }) { (error) in
+             print(error.localizedDescription)
+         }
+         
+     }
+    
+    @IBAction func editWorkspace( sender: Any) {
+        guard let window = self.view.window else {
+            
+            return
+            
+        }
         
-        super.viewDidLayoutSubviews()
+        let vc = EditWorkspaceViewController()
         
-        let gradientMaskLayer = CAGradientLayer()
-        gradientMaskLayer.frame = edgeFadeView.bounds
-
-        gradientMaskLayer.colors =  [UIColor.BgGray.withAlphaComponent(0.0).cgColor, UIColor.BgGray.withAlphaComponent(1.0).cgColor]
-        gradientMaskLayer.locations = [0.0, 1.0]
-
-        edgeFadeView.layer.mask = gradientMaskLayer
+        self.dismiss(animated: true, completion: nil)
+        
+        self.present(vc, animated: true, completion: nil)
         
     }
     
-    @objc private func switchSection(sender: SectionButton) {
+    @IBAction func logout( sender: Any) {
         
-        if !sender.isVisible {
+        do {
             
-            switch sender.section {
-                
-            case .Announcements:
-                
-                print(Section.Announcements)
-                
-                announcementsButton.setVisibility(isVisible: true)
-                toDoButton.setVisibility(isVisible: false)
-                membersButton.setVisibility(isVisible: false)
-                
-                tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .centeredHorizontally, animated: true)
-                
-            case .ToDo:
-                
-                print(Section.ToDo)
-                
-                toDoButton.setVisibility(isVisible: true)
-                announcementsButton.setVisibility(isVisible: false)
-                membersButton.setVisibility(isVisible: false)
-                
-                tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 1, section: 0), at: .centeredHorizontally, animated: true)
-                
-            case .Members:
-                
-                print(Section.Members)
-                
-                membersButton.setVisibility(isVisible: true)
-                announcementsButton.setVisibility(isVisible: false)
-                toDoButton.setVisibility(isVisible: false)
-                
-                tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: true)
-                
-            case .Default: print("ERROR: Trying to switch to Default Section.")
-                
-            }
+            try Auth.auth().signOut()
+            
+        }
+        catch let signOutError as NSError {
+            
+            print ("Error signing out: %@", signOutError)
+            
+        }
+        
+        guard let window = self.view.window else {
+            
+            return
+            
+        }
+        
+        let transition = CATransition()
+        
+        transition.type = .fade
+        
+        transition.duration = 0.5
+        
+        window.layer.add(transition, forKey: kCATransition)
+        
+        window.rootViewController = LoginViewController()
+        
+        window.makeKeyAndVisible()
+        
+    }
+    
+    
+    
+
+
+override func viewDidLayoutSubviews() {
+    
+    super.viewDidLayoutSubviews()
+    
+    let gradientMaskLayer = CAGradientLayer()
+    gradientMaskLayer.frame = edgeFadeView.bounds
+    
+    gradientMaskLayer.colors =  [UIColor.BgGray.withAlphaComponent(0.0).cgColor, UIColor.BgGray.withAlphaComponent(1.0).cgColor]
+    gradientMaskLayer.locations = [0.0, 1.0]
+    
+    edgeFadeView.layer.mask = gradientMaskLayer
+    
+}
+
+    @objc private func switchSection(sender: SectionButton) {
+    
+    if !sender.isVisible {
+        
+        switch sender.section {
+            
+        case .Announcements:
+            
+            print(Section.Announcements)
+            
+            announcementsButton.setVisibility(isVisible: true)
+            toDoButton.setVisibility(isVisible: false)
+            membersButton.setVisibility(isVisible: false)
+            
+            tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .centeredHorizontally, animated: true)
+            
+        case .ToDo:
+            
+            print(Section.ToDo)
+            
+            toDoButton.setVisibility(isVisible: true)
+            announcementsButton.setVisibility(isVisible: false)
+            membersButton.setVisibility(isVisible: false)
+            
+            tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 1, section: 0), at: .centeredHorizontally, animated: true)
+            
+        case .Members:
+            
+            print(Section.Members)
+            
+            membersButton.setVisibility(isVisible: true)
+            announcementsButton.setVisibility(isVisible: false)
+            toDoButton.setVisibility(isVisible: false)
+            
+            tabNavigationCollectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: true)
+            
+        case .Default: print("ERROR: Trying to switch to Default Section.")
             
         }
         
     }
     
-    @objc private func segueToCalendar (sender: UIButton) {
-        
-        print("Seguing to Calendar")
-        
-    }
+}
+
+@objc private func segueToCalendar (sender: UIButton) {
     
-    @objc private func closeSearchBar (sender: UIButton) {
-        
-        searchBar.endEditing(true)
-        
-    }
+    print("Seguing to Calendar")
     
+}
+
+@objc private func closeSearchBar (sender: UIButton) {
+    
+    searchBar.endEditing(true)
+    
+}
+
 }
 
 extension HomeViewController: UISearchBarDelegate {
@@ -365,7 +450,7 @@ extension HomeViewController: UISearchBarDelegate {
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDragDelegate, UICollectionViewDropDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    
+        
         if let collectionView = collectionView as? TabCollectionView {
             
             switch collectionView.section {
@@ -415,340 +500,210 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         if let collectionView = collectionView as? TabNavigationCollectionView {
-            
             if let tabNavigationCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.cellID, for: indexPath) as? tabNavigationCell {
-                
                 switch indexPath.item {
-                    
                 case 0: tabNavigationCell.setSection(section: .Announcements)
-                    
                 case 1:
-                    
                     tabNavigationCell.setSection(section: .ToDo)
                     tabNavigationCell.cellCollectionView.dragInteractionEnabled = true
                     tabNavigationCell.cellCollectionView.dragDelegate = self
                     tabNavigationCell.cellCollectionView.dropDelegate = self
-                    
                 case 2: tabNavigationCell.setSection(section: .Members)
                 default: print("ERROR: IndexPath out of bounds. Setting extra cell to Default.")
-                    
                 }
-                
                 tabNavigationCell.cellCollectionView.delegate = self
                 tabNavigationCell.cellCollectionView.dataSource = self
-                
                 return tabNavigationCell
-                
             } else {
-                
                 print("ERROR: Unable to retrieve a reusableCell for TabNavigationCollectionView. Returning a default cell.")
-    
                 return DefaultCell()
-                
             }
-            
         } else if let collectionView = collectionView as? TabCollectionView {
-                    
             switch collectionView.section {
-                
             case .Announcements:
-                
                 if let announcementsCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? AnnouncementsCell {
-                    
-                    if let newImage = announcementList[indexPath.item].image {
-                        
-                        announcementsCell.announcementsImageView.image = newImage
-                        
-                    }
-                    
-                    if let newTitle = announcementList[indexPath.item].title {
-                        
-                        announcementsCell.announcementsTitleLabel.text = newTitle
-                        
-                    }
-                    
-                    if let newBody = announcementList[indexPath.item].body?.string {
-                        
-                        announcementsCell.announcementsBodyLabel.text = newBody
-                        
-                    }
-                    
+                    announcementsCell.announcementsImageView.image = announcementList[indexPath.item].image
+                    announcementsCell.announcementsTitleLabel.text = announcementList[indexPath.item].title
+                    announcementsCell.announcementsBodyLabel.text = announcementList[indexPath.item].body?.string
                     return announcementsCell
-                    
                 } else {
-                    
                     print("ERROR: Unable to retrieve an AnnouncementsCell. Returning a default cell.")
-                    
                     return DefaultCell()
-                    
                 }
-                
             case .ToDo:
-                
                 if let toDoCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? ToDoCell {
-                    
                     if indexPath.item % 2 == 0 {
-                        
                         toDoCell.toDoLabel.text = toDoList[indexPath.item]
                         toDoCell.toDoDeadlineLabel.text = "May 25, 2020"
                         toDoCell.toggleToDo(isCompleted: true)
-                        
                     }
-                    
                     return toDoCell
-                    
                 } else {
-                    
                     print("ERROR: Unable to retrieve a ToDoCell. Returning a default cell.")
-                    
                     return DefaultCell()
-                    
                 }
-                
             case .Members:
-                
                 if let membersCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? MembersCell {
-        
                     if indexPath.item == 0 {
-                        
                         membersCell.toggleMembers(isHighlighted: true)
                         membersCell.membersImageView.image = UIImage(named: "exampleMembersProfileImage")
                         membersCell.membersNameLabel.text = "Manuel Alejandro Martin Callejo"
                         membersCell.membersTitleLabel.text = "FSPA Developer Team - iOS Developer"
-                        
-            return
-            
+                    }
                     return membersCell
-                    
                 } else {
-                    
                     print("ERROR: Unable to retrieve a MembersCell. Returning a default cell.")
-                 
                     return DefaultCell()
-                    
                 }
-                
             case .Default:
-                
                 if let defaultCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? DefaultCell {
-
                     return defaultCell
-                    
                 } else {
-                    
                     print("ERROR: Unable to retrieve a DefaultCell. Returning a default cell.")
-                 
                     return DefaultCell()
-                    
                 }
-                
             }
-        
         } else {
-            
             return DefaultCell()
-            
         }
-        
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        if let tabCollectionView = collectionView as? TabCollectionView, tabCollectionView.section == .Announcements {
+        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
             
-            let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[indexPath.item])
-            navigationController?.pushViewController(announcementsPageVC, animated: true)
-            
-        }
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        if collectionView is TabNavigationCollectionView {
-            
-            return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
-            
-        } else {
-            
-            return CGSize(width: 0.0, height: 0.0)
-            
-        }
-        
-    }
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
-        if scrollView is TabNavigationCollectionView {
-            
-            let index = Int(targetContentOffset.pointee.x / view.frame.width)
-            
-            if index != currentPage {
+            if let tabCollectionView = collectionView as? TabCollectionView, tabCollectionView.section == .Announcements {
                 
-                switch index {
-                    
-                case 0:
-                    
-                    switchSection(sender: announcementsButton)
-                    currentPage = 0
-                    
-                case 1:
-                    
-                    switchSection(sender: toDoButton)
-                    currentPage = 1
-                    
-                case 2:
-                    
-                    switchSection(sender: membersButton)
-                    currentPage = 2
-                    
-                default: print("ERROR: ScrollView index is out bounds. Rejecting Change.")
-                    
-                }
+                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[indexPath.item])
+                navigationController?.pushViewController(announcementsPageVC, animated: true)
                 
             }
             
         }
         
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        
-        if collectionView is TabCollectionView {
+        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
             
-            let item = toDoList[indexPath.row]
-            let itemProvider = NSItemProvider(object: item as NSString)
-            let dragItem = UIDragItem(itemProvider: itemProvider)
-            dragItem.localObject = item
-            return [dragItem]
-            
-        } else {
-            
-            return []
-            
-        }
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
-        
-        if collectionView is TabCollectionView, collectionView.hasActiveDrag {
-            
-            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-            
-        }
-        
-        return UICollectionViewDropProposal(operation: .forbidden)
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-        
-        if collectionView is TabCollectionView {
-            
-            var destinationIndexPath: IndexPath
-            
-            if let indexPath = coordinator.destinationIndexPath {
+            if collectionView is TabNavigationCollectionView {
                 
-                destinationIndexPath = indexPath
+                return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
                 
             } else {
                 
-                let row = collectionView.numberOfItems(inSection: 0)
-                destinationIndexPath = IndexPath(item: row - 1, section: 0)
+                return CGSize(width: 0.0, height: 0.0)
                 
             }
             
-            if coordinator.proposal.operation == .move {
+        }
+        
+        func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+            
+            if scrollView is TabNavigationCollectionView {
                 
-                if let item = coordinator.items.first, let sourceIndexPath = item.sourceIndexPath {
+                let index = Int(targetContentOffset.pointee.x / view.frame.width)
+                
+                if index != currentPage {
                     
-                    collectionView.performBatchUpdates({
+                    switch index {
                         
-                        self.toDoList.remove(at: sourceIndexPath.item)
-                        self.toDoList.insert(item.dragItem.localObject as! String, at: destinationIndexPath.item)
+                    case 0:
                         
-                        collectionView.deleteItems(at: [sourceIndexPath])
-                        collectionView.insertItems(at: [destinationIndexPath])
+                        switchSection(sender: announcementsButton)
+                        currentPage = 0
                         
-                    }, completion: nil)
-                    
-                    coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
+                    case 1:
+                        
+                        switchSection(sender: toDoButton)
+                        currentPage = 1
+                        
+                    case 2:
+                        
+                        switchSection(sender: membersButton)
+                        currentPage = 2
+                        
+                    default: print("ERROR: ScrollView index is out bounds. Rejecting Change.")
+                        
+                    }
                     
                 }
                 
-        
-            
-        }
-        self.dismiss(animated: true, completion: nil)
-        
-        self.present(vc, animated: true, completion: nil)
-
-    }
-    
-    @IBAction func logout(_ sender: Any) {
-        
-        do {
-            
-            try Auth.auth().signOut()
-            
-        }
-        catch let signOutError as NSError {
-            
-            print ("Error signing out: %@", signOutError)
+            }
             
         }
         
-        guard let window = self.view.window else {
+        func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
             
-            return
-            
-        }
-        
-        let transition = CATransition()
-        
-        transition.type = .fade
-        
-        transition.duration = 0.5
-        
-        window.layer.add(transition, forKey: kCATransition)
+            if collectionView is TabCollectionView {
                 
-        window.rootViewController = LoginViewController()
-        
-        window.makeKeyAndVisible()
+                let item = toDoList[indexPath.row]
+                let itemProvider = NSItemProvider(object: item as NSString)
+                let dragItem = UIDragItem(itemProvider: itemProvider)
+                dragItem.localObject = item
+                return [dragItem]
+                
+            } else {
+                
+                return []
+                
+            }
             
-    }
+        }
+        
+        func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+            
+            if collectionView is TabCollectionView, collectionView.hasActiveDrag {
+                
+                return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+                
+            }
+            
+            return UICollectionViewDropProposal(operation: .forbidden)
+            
+        }
+        
+        func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+            
+            if collectionView is TabCollectionView {
+                
+                var destinationIndexPath: IndexPath
+                
+                if let indexPath = coordinator.destinationIndexPath {
+                    
+                    destinationIndexPath = indexPath
+                    
+                } else {
+                    
+                    let row = collectionView.numberOfItems(inSection: 0)
+                    destinationIndexPath = IndexPath(item: row - 1, section: 0)
+                    
+                }
+                
+                if coordinator.proposal.operation == .move {
+                    
+                    if let item = coordinator.items.first, let sourceIndexPath = item.sourceIndexPath {
+                        
+                        collectionView.performBatchUpdates({
+                            
+                            self.toDoList.remove(at: sourceIndexPath.item)
+                            self.toDoList.insert(item.dragItem.localObject as! String, at: destinationIndexPath.item)
+                            
+                            collectionView.deleteItems(at: [sourceIndexPath])
+                            collectionView.insertItems(at: [destinationIndexPath])
+                            
+                        }, completion: nil)
+                        
+                        coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
+                        
+                    }
+                    
+                    
+                    
+                }
+                
+            }
     
-    
-    
+        }
+
 }
 
-extension UIView {
-    
-    public func addShadowAndRoundCorners(cornerRadius: CGFloat? = nil, shadowColor: UIColor? = nil, shadowOffset: CGSize? = nil, shadowOpacity: Float? = nil, shadowRadius: CGFloat? = nil, topRightMask: Bool = true, topLeftMask: Bool = true, bottomRightMask: Bool = true, bottomLeftMask: Bool = true) {
-        
-        layer.masksToBounds = false
-        layer.cornerRadius = 8.0
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = CGSize(width: 0.0, height: 2.0) // Shifts shadow
-        layer.shadowOpacity = 0.2 // Higher value means more opaque
-        layer.shadowRadius = 2 // Higher value means more blurry
-        var maskedCorners = CACornerMask()
-        
-        if let cr = cornerRadius { layer.cornerRadius = cr }
-        if let sc = shadowColor { layer.shadowColor = sc.cgColor }
-        if let sof = shadowOffset { layer.shadowOffset = sof }
-        if let sop = shadowOpacity { layer.shadowOpacity = sop }
-        if let sr = shadowRadius { layer.shadowRadius = sr }
-        
-        if topRightMask { maskedCorners.insert(.layerMaxXMinYCorner) }
-        if topLeftMask { maskedCorners.insert(.layerMinXMinYCorner) }
-        if bottomRightMask { maskedCorners.insert(.layerMaxXMaxYCorner) }
-        if bottomLeftMask { maskedCorners.insert(.layerMinXMaxYCorner) }
-        if !maskedCorners.isEmpty { layer.maskedCorners = maskedCorners }
-        
-    }
-    
-}
+
+
+
