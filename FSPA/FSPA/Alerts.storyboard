@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Octarine-Bold.otf">
+            <string>Octarine-Bold</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--Dangerous Action Alert-->
+        <scene sceneID="9Hu-8T-Pip">
+            <objects>
+                <viewController storyboardIdentifier="dangerousActionAlert" id="iAB-Ta-JM5" customClass="dangerousActionAlert" customModule="Poppin" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="d0a-ee-WgI">
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="150"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GXM-F6-JBB">
+                                <rect key="frame" x="151" y="110" width="149" height="40"/>
+                                <color key="backgroundColor" name="mainNAVYBLUE"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="GXM-F6-JBB" secondAttribute="height" multiplier="149:40" id="9JY-lF-ZD9"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Octarine-Bold" family="Octarine" pointSize="17"/>
+                                <state key="normal" title="Continue">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="button2Tapped" destination="iAB-Ta-JM5" eventType="touchUpInside" id="bsf-0T-7nB"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="K54-p6-Jva">
+                                <rect key="frame" x="0.0" y="110" width="149" height="40"/>
+                                <color key="backgroundColor" name="mainNAVYBLUE"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="K54-p6-Jva" secondAttribute="height" multiplier="149:40" id="G2y-bX-E98"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Octarine-Bold" family="Octarine" pointSize="17"/>
+                                <state key="normal" title="Cancel">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="button1Tapped" destination="iAB-Ta-JM5" eventType="touchUpInside" id="a4S-eo-QDB"/>
+                                </connections>
+                            </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="exclamationmark.triangle.fill" catalog="system" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v4G-1y-4WP">
+                                <rect key="frame" x="0.0" y="5.5" width="300" height="49.5"/>
+                                <color key="tintColor" name="mainNAVYBLUE"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="v4G-1y-4WP" secondAttribute="height" multiplier="300:47" id="EyE-8h-gIL"/>
+                                </constraints>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="17" scale="large" weight="regular"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If you proceed some information will be lost." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H9i-3t-7b3">
+                                <rect key="frame" x="10" y="62" width="280" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="H9i-3t-7b3" secondAttribute="height" multiplier="7:1" id="tWM-6d-4RS"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Octarine-Bold" family="Octarine" pointSize="18"/>
+                                <color key="textColor" name="mainNAVYBLUE"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="H9i-3t-7b3" firstAttribute="top" secondItem="v4G-1y-4WP" secondAttribute="bottom" constant="8" id="2yA-tr-8CI"/>
+                            <constraint firstItem="GXM-F6-JBB" firstAttribute="top" secondItem="H9i-3t-7b3" secondAttribute="bottom" constant="8" id="6OA-Ne-5Oc"/>
+                            <constraint firstItem="v4G-1y-4WP" firstAttribute="leading" secondItem="F26-Ai-q9f" secondAttribute="leading" id="89q-tG-ZwQ"/>
+                            <constraint firstItem="K54-p6-Jva" firstAttribute="top" secondItem="H9i-3t-7b3" secondAttribute="bottom" constant="8" id="CLp-Ie-9aX"/>
+                            <constraint firstItem="F26-Ai-q9f" firstAttribute="trailing" secondItem="H9i-3t-7b3" secondAttribute="trailing" constant="10" id="INE-Pp-UlT"/>
+                            <constraint firstItem="GXM-F6-JBB" firstAttribute="trailing" secondItem="F26-Ai-q9f" secondAttribute="trailing" id="RPo-Ak-weZ"/>
+                            <constraint firstItem="v4G-1y-4WP" firstAttribute="trailing" secondItem="F26-Ai-q9f" secondAttribute="trailing" id="TjI-y0-ila"/>
+                            <constraint firstItem="H9i-3t-7b3" firstAttribute="leading" secondItem="F26-Ai-q9f" secondAttribute="leading" constant="10" id="YMq-8u-p9C"/>
+                            <constraint firstItem="K54-p6-Jva" firstAttribute="bottom" secondItem="F26-Ai-q9f" secondAttribute="bottom" id="bMU-Z4-p6x"/>
+                            <constraint firstItem="GXM-F6-JBB" firstAttribute="bottom" secondItem="F26-Ai-q9f" secondAttribute="bottom" id="cFN-nz-uQc"/>
+                            <constraint firstItem="v4G-1y-4WP" firstAttribute="top" secondItem="F26-Ai-q9f" secondAttribute="top" constant="7" id="iQF-pN-Pex"/>
+                            <constraint firstItem="GXM-F6-JBB" firstAttribute="leading" secondItem="K54-p6-Jva" secondAttribute="trailing" constant="2" id="mR3-4K-gFE"/>
+                            <constraint firstItem="K54-p6-Jva" firstAttribute="leading" secondItem="F26-Ai-q9f" secondAttribute="leading" id="mpq-NI-RZr"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="F26-Ai-q9f"/>
+                    </view>
+                    <size key="freeformSize" width="300" height="150"/>
+                    <connections>
+                        <outlet property="dangerousActionAlertButton1" destination="K54-p6-Jva" id="EmD-ek-0Oz"/>
+                        <outlet property="dangerousActionAlertButton2" destination="GXM-F6-JBB" id="Gar-ON-Wyt"/>
+                        <outlet property="dangerousActionAlertIcon" destination="v4G-1y-4WP" id="bkc-vC-yDr"/>
+                        <outlet property="dangerousActionAlertMessage" destination="H9i-3t-7b3" id="4dN-xg-8xD"/>
+                        <outlet property="dangerousActionAlertView" destination="d0a-ee-WgI" id="fcf-ne-bXw"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="EJe-L5-G1X" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="137.59999999999999" y="84.557721139430285"/>
+        </scene>
+        <!--Dangerous Action Alert-->
+        <scene sceneID="bla-FA-hZF">
+            <objects>
+                <viewController storyboardIdentifier="informationMissingAlert" id="CV6-7M-EU8" customClass="dangerousActionAlert" customModule="Poppin" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="vRj-kf-gZP">
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="150"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some information is missing, please fill it out." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5qF-D8-IrX">
+                                <rect key="frame" x="10" y="62" width="280" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="5qF-D8-IrX" secondAttribute="height" multiplier="7:1" id="dHn-pJ-pAz"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Octarine-Bold" family="Octarine" pointSize="18"/>
+                                <color key="textColor" name="mainNAVYBLUE"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uQj-BC-ik8">
+                                <rect key="frame" x="0.0" y="110" width="300" height="40"/>
+                                <color key="backgroundColor" name="mainNAVYBLUE"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="uQj-BC-ik8" secondAttribute="height" multiplier="15:2" id="mgs-hW-ZWG"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Octarine-Bold" family="Octarine" pointSize="17"/>
+                                <state key="normal" title="Ok">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="button1Tapped" destination="CV6-7M-EU8" eventType="touchUpInside" id="uN9-c9-sxU"/>
+                                </connections>
+                            </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="xmark.circle.fill" catalog="system" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4vm-U4-kmW">
+                                <rect key="frame" x="0.0" y="5" width="300" height="51"/>
+                                <color key="tintColor" name="mainNAVYBLUE"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="4vm-U4-kmW" secondAttribute="height" multiplier="300:47" id="Maw-jQ-pf0"/>
+                                </constraints>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="17" scale="large" weight="regular"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="E3u-gc-b8h" firstAttribute="trailing" secondItem="5qF-D8-IrX" secondAttribute="trailing" constant="10" id="5WB-O3-jip"/>
+                            <constraint firstItem="4vm-U4-kmW" firstAttribute="top" secondItem="E3u-gc-b8h" secondAttribute="top" constant="7" id="7cm-5o-IfE"/>
+                            <constraint firstItem="5qF-D8-IrX" firstAttribute="leading" secondItem="E3u-gc-b8h" secondAttribute="leading" constant="10" id="9bn-sJ-J2o"/>
+                            <constraint firstItem="uQj-BC-ik8" firstAttribute="bottom" secondItem="E3u-gc-b8h" secondAttribute="bottom" id="GLA-77-hAx"/>
+                            <constraint firstItem="4vm-U4-kmW" firstAttribute="leading" secondItem="E3u-gc-b8h" secondAttribute="leading" id="Xx6-cT-6Gm"/>
+                            <constraint firstItem="uQj-BC-ik8" firstAttribute="top" secondItem="5qF-D8-IrX" secondAttribute="bottom" constant="8" id="Zpo-iK-din"/>
+                            <constraint firstItem="uQj-BC-ik8" firstAttribute="trailing" secondItem="E3u-gc-b8h" secondAttribute="trailing" id="fsM-9P-H5D"/>
+                            <constraint firstItem="4vm-U4-kmW" firstAttribute="trailing" secondItem="E3u-gc-b8h" secondAttribute="trailing" id="oUJ-Lc-sY5"/>
+                            <constraint firstItem="5qF-D8-IrX" firstAttribute="top" secondItem="4vm-U4-kmW" secondAttribute="bottom" constant="8" id="xb6-7z-vey"/>
+                            <constraint firstItem="uQj-BC-ik8" firstAttribute="leading" secondItem="E3u-gc-b8h" secondAttribute="leading" id="yzr-MB-CdU"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="E3u-gc-b8h"/>
+                    </view>
+                    <size key="freeformSize" width="300" height="150"/>
+                    <connections>
+                        <outlet property="dangerousActionAlertButton1" destination="uQj-BC-ik8" id="rz9-WO-gTW"/>
+                        <outlet property="dangerousActionAlertIcon" destination="4vm-U4-kmW" id="LE0-kc-rQC"/>
+                        <outlet property="dangerousActionAlertMessage" destination="5qF-D8-IrX" id="HZe-B2-FUI"/>
+                        <outlet property="dangerousActionAlertView" destination="vRj-kf-gZP" id="Qbr-26-Xfi"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8ro-fJ-cYM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="688" y="84.557721139430285"/>
+        </scene>
+        <!--Dangerous Action Alert-->
+        <scene sceneID="GBh-6u-elL">
+            <objects>
+                <viewController storyboardIdentifier="connectionLostAlert" id="ydl-OY-GIu" customClass="dangerousActionAlert" customModule="Poppin" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ZuR-KD-3gj">
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="110"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some information is missing, please fill it out." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t0n-Bb-JzT">
+                                <rect key="frame" x="10" y="62" width="280" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="t0n-Bb-JzT" secondAttribute="height" multiplier="7:1" id="KD9-xH-wcz"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Octarine-Bold" family="Octarine" pointSize="18"/>
+                                <color key="textColor" name="mainNAVYBLUE"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="wifi.exclamationmark" catalog="system" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PvX-W3-lOd">
+                                <rect key="frame" x="0.0" y="6" width="300" height="48"/>
+                                <color key="tintColor" name="mainNAVYBLUE"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="PvX-W3-lOd" secondAttribute="height" multiplier="300:47" id="asc-Vj-kc3"/>
+                                </constraints>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="17" scale="large" weight="regular"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="PvX-W3-lOd" firstAttribute="leading" secondItem="nb6-fW-fcT" secondAttribute="leading" id="0WB-Jv-Wds"/>
+                            <constraint firstItem="nb6-fW-fcT" firstAttribute="trailing" secondItem="t0n-Bb-JzT" secondAttribute="trailing" constant="10" id="0XS-mb-9i5"/>
+                            <constraint firstItem="nb6-fW-fcT" firstAttribute="bottom" secondItem="t0n-Bb-JzT" secondAttribute="bottom" constant="8" id="BDf-fK-xPp"/>
+                            <constraint firstItem="PvX-W3-lOd" firstAttribute="top" secondItem="nb6-fW-fcT" secondAttribute="top" constant="7" id="BJe-ko-JwL"/>
+                            <constraint firstItem="PvX-W3-lOd" firstAttribute="trailing" secondItem="nb6-fW-fcT" secondAttribute="trailing" id="F4a-SL-PLG"/>
+                            <constraint firstItem="t0n-Bb-JzT" firstAttribute="top" secondItem="PvX-W3-lOd" secondAttribute="bottom" constant="8" id="gyi-dn-6Xc"/>
+                            <constraint firstItem="t0n-Bb-JzT" firstAttribute="leading" secondItem="nb6-fW-fcT" secondAttribute="leading" constant="10" id="zXg-KJ-mBu"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="nb6-fW-fcT"/>
+                    </view>
+                    <size key="freeformSize" width="300" height="110"/>
+                    <connections>
+                        <outlet property="dangerousActionAlertIcon" destination="PvX-W3-lOd" id="Q9e-ZV-Y7D"/>
+                        <outlet property="dangerousActionAlertMessage" destination="t0n-Bb-JzT" id="hWq-l9-UIB"/>
+                        <outlet property="dangerousActionAlertView" destination="ZuR-KD-3gj" id="NxS-1S-9we"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GmK-8u-TtL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-403" y="85"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="exclamationmark.triangle.fill" catalog="system" width="128" height="112"/>
+        <image name="wifi.exclamationmark" catalog="system" width="128" height="101"/>
+        <image name="xmark.circle.fill" catalog="system" width="128" height="121"/>
+        <namedColor name="mainNAVYBLUE">
+            <color red="0.0" green="0.15700000524520874" blue="0.40799999237060547" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

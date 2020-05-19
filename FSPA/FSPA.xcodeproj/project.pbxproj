@@ -13,6 +13,17 @@
 		64CE2EAA24439B0500EBE29C /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CE2EA924439B0500EBE29C /* HomeViewController.swift */; };
 		674E9E8E651F5DAD9D49DAEA /* Pods_FSPATests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 771D1814AA7B00D1B070EF90 /* Pods_FSPATests.framework */; };
 		CE14797EEB0A42F4DFD322AD /* Pods_FSPA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 429B2F88C1C4F39EBDA78A56 /* Pods_FSPA.framework */; };
+		F51D9B7624468A190008DE84 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51D9B7524468A190008DE84 /* LoginViewController.swift */; };
+		F58DAE762447A11200BCAB02 /* LoginPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE752447A11200BCAB02 /* LoginPageViewController.swift */; };
+		F58DAE782447A12200BCAB02 /* RegisterPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE772447A12200BCAB02 /* RegisterPageViewController.swift */; };
+		F58DAE7C2448079800BCAB02 /* Alerts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F58DAE792448079700BCAB02 /* Alerts.storyboard */; };
+		F58DAE7D2448079800BCAB02 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE7A2448079700BCAB02 /* Utils.swift */; };
+		F58DAE7E2448079800BCAB02 /* dangerousActionAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE7B2448079700BCAB02 /* dangerousActionAlert.swift */; };
+		F58DAE8024480B0A00BCAB02 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE7F24480B0A00BCAB02 /* User.swift */; };
+		F58DAE82244EBD8700BCAB02 /* SlideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE81244EBD8700BCAB02 /* SlideMenuViewController.swift */; };
+		F58DAE84244FB33200BCAB02 /* Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE83244FB33200BCAB02 /* Workspace.swift */; };
+		F58DAE862458D15400BCAB02 /* EditWorkspaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE852458D15400BCAB02 /* EditWorkspaceViewController.swift */; };
+		F58DAE882469F68000BCAB02 /* CreateWorkspaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58DAE872469F68000BCAB02 /* CreateWorkspaceViewController.swift */; };
 		F59CAF2D243E5E3E0033A283 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CAF2C243E5E3E0033A283 /* AppDelegate.swift */; };
 		F59CAF2F243E5E3E0033A283 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59CAF2E243E5E3E0033A283 /* SceneDelegate.swift */; };
 		F59CAF39243E5E430033A283 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F59CAF38243E5E430033A283 /* Assets.xcassets */; };
@@ -50,6 +61,17 @@
 		A95605FDA875B8A4257FD0AA /* Pods-FSPA-FSPAUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPA-FSPAUITests.debug.xcconfig"; path = "Target Support Files/Pods-FSPA-FSPAUITests/Pods-FSPA-FSPAUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		E973E20EB6C021F4C6ED34BE /* Pods-FSPATests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPATests.release.xcconfig"; path = "Target Support Files/Pods-FSPATests/Pods-FSPATests.release.xcconfig"; sourceTree = "<group>"; };
 		F249CA8FE30EAEE3127DF69B /* Pods-FSPATests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSPATests.debug.xcconfig"; path = "Target Support Files/Pods-FSPATests/Pods-FSPATests.debug.xcconfig"; sourceTree = "<group>"; };
+		F51D9B7524468A190008DE84 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		F58DAE752447A11200BCAB02 /* LoginPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPageViewController.swift; sourceTree = "<group>"; };
+		F58DAE772447A12200BCAB02 /* RegisterPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPageViewController.swift; sourceTree = "<group>"; };
+		F58DAE792448079700BCAB02 /* Alerts.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Alerts.storyboard; sourceTree = "<group>"; };
+		F58DAE7A2448079700BCAB02 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		F58DAE7B2448079700BCAB02 /* dangerousActionAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = dangerousActionAlert.swift; sourceTree = "<group>"; };
+		F58DAE7F24480B0A00BCAB02 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		F58DAE81244EBD8700BCAB02 /* SlideMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuViewController.swift; sourceTree = "<group>"; usesTabs = 1; };
+		F58DAE83244FB33200BCAB02 /* Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workspace.swift; sourceTree = "<group>"; };
+		F58DAE852458D15400BCAB02 /* EditWorkspaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditWorkspaceViewController.swift; sourceTree = "<group>"; };
+		F58DAE872469F68000BCAB02 /* CreateWorkspaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateWorkspaceViewController.swift; sourceTree = "<group>"; };
 		F59CAF29243E5E3E0033A283 /* FSPA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSPA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F59CAF2C243E5E3E0033A283 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F59CAF2E243E5E3E0033A283 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -150,8 +172,19 @@
 				64CE2EA924439B0500EBE29C /* HomeViewController.swift */,
 				F59CAF38243E5E430033A283 /* Assets.xcassets */,
 				F59CAF3A243E5E430033A283 /* LaunchScreen.storyboard */,
+				F58DAE792448079700BCAB02 /* Alerts.storyboard */,
+				F58DAE7B2448079700BCAB02 /* dangerousActionAlert.swift */,
+				F58DAE7A2448079700BCAB02 /* Utils.swift */,
 				F59CAF3D243E5E430033A283 /* Info.plist */,
+				F58DAE7F24480B0A00BCAB02 /* User.swift */,
 				F59CAF5F243E5FA90033A283 /* GoogleService-Info.plist */,
+				F51D9B7524468A190008DE84 /* LoginViewController.swift */,
+				F58DAE752447A11200BCAB02 /* LoginPageViewController.swift */,
+				F58DAE772447A12200BCAB02 /* RegisterPageViewController.swift */,
+				F58DAE81244EBD8700BCAB02 /* SlideMenuViewController.swift */,
+				F58DAE83244FB33200BCAB02 /* Workspace.swift */,
+				F58DAE852458D15400BCAB02 /* EditWorkspaceViewController.swift */,
+				F58DAE872469F68000BCAB02 /* CreateWorkspaceViewController.swift */,
 			);
 			path = FSPA;
 			sourceTree = "<group>";
@@ -288,6 +321,7 @@
 				F59CAF3C243E5E430033A283 /* LaunchScreen.storyboard in Resources */,
 				F59CAF60243E5FAA0033A283 /* GoogleService-Info.plist in Resources */,
 				F59CAF39243E5E430033A283 /* Assets.xcassets in Resources */,
+				F58DAE7C2448079800BCAB02 /* Alerts.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,11 +483,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F58DAE862458D15400BCAB02 /* EditWorkspaceViewController.swift in Sources */,
+				F58DAE782447A12200BCAB02 /* RegisterPageViewController.swift in Sources */,
+				F58DAE82244EBD8700BCAB02 /* SlideMenuViewController.swift in Sources */,
+				F58DAE7E2448079800BCAB02 /* dangerousActionAlert.swift in Sources */,
+				F51D9B7624468A190008DE84 /* LoginViewController.swift in Sources */,
+				F58DAE7D2448079800BCAB02 /* Utils.swift in Sources */,
 				F59CAF2D243E5E3E0033A283 /* AppDelegate.swift in Sources */,
 				6469DD7624461ADD007CBC89 /* SectionButton.swift in Sources */,
 				F59CAF2F243E5E3E0033A283 /* SceneDelegate.swift in Sources */,
 				6469DD7424460E11007CBC89 /* CustomColors.swift in Sources */,
+				F58DAE762447A11200BCAB02 /* LoginPageViewController.swift in Sources */,
 				64CE2EAA24439B0500EBE29C /* HomeViewController.swift in Sources */,
+				F58DAE8024480B0A00BCAB02 /* User.swift in Sources */,
+				F58DAE84244FB33200BCAB02 /* Workspace.swift in Sources */,
+				F58DAE882469F68000BCAB02 /* CreateWorkspaceViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

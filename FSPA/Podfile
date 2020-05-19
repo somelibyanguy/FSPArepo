@@ -14,7 +14,9 @@ target 'FSPA' do
   pod 'Firebase/Storage'
   pod 'FirebaseUI/Auth'
   pod 'FirebaseUI/Email'
-
+  pod 'SideMenu'
+  pod 'SearchTextField'
+ 
   target 'FSPATests' do
     inherit! :search_paths
     # Pods for testing

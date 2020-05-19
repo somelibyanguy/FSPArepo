@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Firebase
+import SideMenu
 
 @available(iOS 13.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -20,23 +22,80 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         
+
+        
         if let windowScene = scene as? UIWindowScene {
             
-            let window = UIWindow(windowScene: windowScene)
+           let window = UIWindow(windowScene: windowScene)
             
-            let homeVC = HomeViewController()
+            let defaults = UserDefaults.standard
+                   
+                   let initialViewController: UIViewController
+
+                   if let _ = Auth.auth().currentUser,
+                       
+                      let userData = defaults.object(forKey: "currentUser") as? Data,
+                       
+                      let user = try? JSONDecoder().decode(User.self, from: userData) {
+                       
+                       User.setCurrent(user)
+                       
+                       initialViewController = HomeViewController()
+                       
+                   } else {
+                       
+                       initialViewController = LoginViewController()
+                       
+                   }
             
-            navigationController = UINavigationController(rootViewController: homeVC)
+                        
             
-            navigationController?.setNavigationBarHidden(true, animated: false)
+                        navigationController = UINavigationController(rootViewController: initialViewController)
             
-            window.rootViewController = navigationController
+                           let leftMenuNavigationController = SideMenuNavigationController(rootViewController: SlideMenuViewController())
+                            SideMenuManager.default.leftMenuNavigationController = leftMenuNavigationController
+
+//                            SideMenuManager.default.addPanGestureToPresent(toView: self.navigationController!.navigationBar)
+//                            SideMenuManager.default.addScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
+
+                       
+
+                            leftMenuNavigationController.statusBarEndAlpha = 0
+                            
+
+                            leftMenuNavigationController.menuWidth = 3 * UIScreen.main.bounds.width/4
+                            leftMenuNavigationController.setNavigationBarHidden(true, animated: false)
+                           
+
             
-            self.window = window
-            
-            window.makeKeyAndVisible()
+ 
+                       navigationController?.setNavigationBarHidden(true, animated: false)
+                       
+                       window.rootViewController = navigationController
+                       
+                       self.window = window
+                       
+                       window.makeKeyAndVisible()
             
         }
+
+            
+//            let homeVC = HomeViewController()
+//
+//            navigationController = UINavigationController(rootViewController: homeVC)
+//
+//            navigationController?.setNavigationBarHidden(true, animated: false)
+//
+//            window.rootViewController = navigationController
+////
+//          self.window = window
+////
+//            window.makeKeyAndVisible()
+               
+ //          }
+        
+        //configureInitialRootViewController(for: window)
+        guard let _ = (scene as? UIWindowScene) else { return }
         
     }
 
@@ -71,4 +130,54 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
 }
+extension SceneDelegate {
+    
+    func configureInitialRootViewController(for window: UIWindow?) {
+        
+        let defaults = UserDefaults.standard
+        
+        let initialViewController: UIViewController
 
+        if let _ = Auth.auth().currentUser,
+            
+           let userData = defaults.object(forKey: "currentUser") as? Data,
+            
+           let user = try? JSONDecoder().decode(User.self, from: userData) {
+            
+            User.setCurrent(user)
+            
+            initialViewController = HomeViewController()
+            
+        } else {
+            
+            initialViewController = LoginViewController()
+            
+        }
+        
+//        let transition = CATransition()
+//
+//        transition.type = .fade
+//
+//        transition.duration = 0.5
+//
+//        guard let window = self.window else {
+//
+//            return
+//
+//        }
+//
+        navigationController = UINavigationController(rootViewController: initialViewController)
+
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        
+ //       window.layer.add(transition, forKey: kCATransition)
+        
+        window?.rootViewController = initialViewController
+        
+        //self.window = window
+
+        window?.makeKeyAndVisible()
+        
+    }
+    
+}

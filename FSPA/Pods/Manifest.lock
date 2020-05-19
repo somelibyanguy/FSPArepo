@@ -102,6 +102,8 @@ PODS:
   - SDWebImage (5.6.1):
     - SDWebImage/Core (= 5.6.1)
   - SDWebImage/Core (5.6.1)
+  - SearchTextField (1.2.4)
+  - SideMenu (6.4.8)
 
 DEPENDENCIES:
   - Firebase/Analytics
@@ -112,6 +114,8 @@ DEPENDENCIES:
   - FirebaseUI/Auth
   - FirebaseUI/Email
   - FirebaseUI/Storage
+  - SearchTextField
+  - SideMenu
 
 SPEC REPOS:
   trunk:
@@ -135,6 +139,8 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - SDWebImage
+    - SearchTextField
+    - SideMenu
 
 SPEC CHECKSUMS:
   Firebase: f378c80340dd41c0ad0914af740c021eb282a04b
@@ -157,7 +163,9 @@ SPEC CHECKSUMS:
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   SDWebImage: 7edb9c3ea661e77a66661f7f044de8c1b55d1120
+  SearchTextField: 40dc3cc57def5a211f263cac263622c163bbc25a
+  SideMenu: 4a891be552d30bb6fa87ad404d62e485f8450c34
 
-PODFILE CHECKSUM: c7a2dd27ffe02bbb97de9fab285a2d72aa73aa87
+PODFILE CHECKSUM: 49cb9b658cc5630c836e01abf1ac60634178d9c5
 
 COCOAPODS: 1.8.4
