@@ -36,6 +36,7 @@ final class TabNavigationCollectionView: UICollectionView {
         self.backgroundColor = UIColor.BgGray
         self.isPagingEnabled = true
         self.showsHorizontalScrollIndicator = false
+        self.bounces = false
         
     }
     
@@ -180,6 +181,32 @@ final class AnnouncementsCell: UICollectionViewCell {
         
     }()
     
+    lazy private(set) var announcementsPinButton: BubbleButton = {
+        
+        let edgeInset: CGFloat = .getPercentageWidth(percentage: 2.3)
+        
+        var announcementsPinButton = BubbleButton(bubbleButtonImage: UIImage.pinIcon.withTintColor(UIColor.white))
+        announcementsPinButton.backgroundColor = UIColor.PrimaryCrimson
+        announcementsPinButton.contentEdgeInsets = UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
+        announcementsPinButton.isUserInteractionEnabled = false
+        announcementsPinButton.isHidden = true
+        return announcementsPinButton
+        
+    }()
+    
+    lazy private(set) var announcementsVisibilityButton: BubbleButton = {
+        
+        let edgeInset: CGFloat = .getPercentageWidth(percentage: 2.3)
+        
+        var announcementsVisibilityButton = BubbleButton(bubbleButtonImage: UIImage.visibleEyeIcon.withTintColor(UIColor.white))
+        announcementsVisibilityButton.backgroundColor = UIColor.PrimaryCrimson
+        announcementsVisibilityButton.contentEdgeInsets = UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
+        announcementsVisibilityButton.isUserInteractionEnabled = false
+        announcementsVisibilityButton.isHidden = true
+        return announcementsVisibilityButton
+        
+    }()
+    
     override init(frame: CGRect) {
         
         super.init(frame: frame)
@@ -212,6 +239,20 @@ final class AnnouncementsCell: UICollectionViewCell {
         announcementsLabelsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: horizontalEdgeInset).isActive = true
         announcementsLabelsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -horizontalEdgeInset).isActive = true
         announcementsLabelsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -verticalEdgeInset).isActive = true
+        
+        contentView.addSubview(announcementsPinButton)
+        announcementsPinButton.translatesAutoresizingMaskIntoConstraints = false
+        announcementsPinButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: verticalEdgeInset).isActive = true
+        announcementsPinButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: horizontalEdgeInset).isActive = true
+        announcementsPinButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1).isActive = true
+        announcementsPinButton.heightAnchor.constraint(equalTo: announcementsPinButton.widthAnchor).isActive = true
+        
+        contentView.addSubview(announcementsVisibilityButton)
+        announcementsVisibilityButton.translatesAutoresizingMaskIntoConstraints = false
+        announcementsVisibilityButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: verticalEdgeInset).isActive = true
+        announcementsVisibilityButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -horizontalEdgeInset).isActive = true
+        announcementsVisibilityButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1).isActive = true
+        announcementsVisibilityButton.heightAnchor.constraint(equalTo: announcementsVisibilityButton.widthAnchor).isActive = true
        
     }
     

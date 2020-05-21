@@ -11,6 +11,15 @@ import Firebase
 import SideMenu
 import SearchTextField
 
+protocol AnnouncementsPageViewControllerDelegate: class {
+    
+    func togglePin(forAnnouncementAt index: Int)
+    func toggleVisibility(forAnnouncementAt index: Int)
+    func editAnnouncement(forAnnouncementAt index: Int, newImage: UIImage?, newTitle: String?, newBody: NSAttributedString?)
+    func deleteAnnouncement(forAnnouncementAt index: Int)
+    
+}
+
 final class HomeViewController: UIViewController {
     
     lazy private(set) var topView: UIView = {
@@ -104,7 +113,11 @@ final class HomeViewController: UIViewController {
     
     lazy private(set) var addCellButton: BubbleButton = {
         
-        var addCellButton = BubbleButton(bubbleButtonImage: UIImage.addPlusIcon.withTintColor(UIColor.PrimaryCrimson))
+        let edgeInset: CGFloat = .getPercentageWidth(percentage: 3.5)
+        
+        var addCellButton = BubbleButton(bubbleButtonImage: UIImage.addPlusIcon.withTintColor(UIColor.BgGray))
+        addCellButton.backgroundColor = UIColor.PrimaryCrimson
+        addCellButton.contentEdgeInsets = UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
         addCellButton.addTarget(self, action: #selector(addCell(sender:)), for: .touchUpInside)
         addCellButton.accessibilityIdentifier = "homeVC/addCellButton"
         return addCellButton
@@ -114,6 +127,8 @@ final class HomeViewController: UIViewController {
     private var currentPage: Int = 0
     private let edgeInset: CGFloat = .getPercentageWidth(percentage: 5)
     private var announcementList: [Announcement] = []
+    private var pinAnnouncementIndexList: [Int] = []
+    private var nonPinAnnouncementIndexList: [Int] = []
     private var toDoList: [String] = ["Example 1", "Very long toDo title to showcase functionality", "Completed toDo"]
     
     lazy private(set) var edgeFadeView: UIView = UIView()
@@ -411,9 +426,20 @@ final class HomeViewController: UIViewController {
             case .Announcements:
                 
                 announcementList.insert(Announcement(), at: 0)
-                tabNavigationCell.cellCollectionView.insertItems(at: [IndexPath(row: 0, section: 0)])
-                tabNavigationCell.cellCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .centeredVertically)
-                collectionView(tabNavigationCell.cellCollectionView, didSelectItemAt: IndexPath(row: 0, section: 0))
+                refreshPinAnnouncements()
+                tabNavigationCell.cellCollectionView.reloadData()
+                
+                if pinAnnouncementIndexList.isEmpty {
+                    
+                    tabNavigationCell.cellCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .centeredVertically)
+                    collectionView(tabNavigationCell.cellCollectionView, didSelectItemAt: IndexPath(row: 0, section: 0))
+                    
+                } else {
+                    
+                    tabNavigationCell.cellCollectionView.selectItem(at: IndexPath(row: pinAnnouncementIndexList.count, section: 0), animated: true, scrollPosition: .centeredVertically)
+                    collectionView(tabNavigationCell.cellCollectionView, didSelectItemAt: IndexPath(row: pinAnnouncementIndexList.count, section: 0))
+                    
+                }
                 
             case .ToDo: print("ERROR: Trying to add a cell to a toDo collectionView.")
             case .Members: print("ERROR: Trying to add a cell to a members collectionView.")
@@ -434,6 +460,30 @@ final class HomeViewController: UIViewController {
     @objc private func closeSearchBar (sender: UIButton) {
         
         searchBar.endEditing(true)
+        
+    }
+    
+    private func refreshPinAnnouncements() {
+        
+        var index = 0
+        pinAnnouncementIndexList = []
+        nonPinAnnouncementIndexList = []
+        
+        while index < announcementList.count {
+            
+            if announcementList[index].isPin {
+                
+                pinAnnouncementIndexList.append(index)
+                
+            } else {
+                
+                nonPinAnnouncementIndexList.append(index)
+                
+            }
+            
+            index+=1
+            
+        }
         
     }
     
@@ -540,73 +590,155 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         if let collectionView = collectionView as? TabNavigationCollectionView {
+            
             if let tabNavigationCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.cellID, for: indexPath) as? tabNavigationCell {
+                
                 switch indexPath.item {
+                    
                 case 0: tabNavigationCell.setSection(section: .Announcements)
                 case 1:
+                    
                     tabNavigationCell.setSection(section: .ToDo)
                     tabNavigationCell.cellCollectionView.dragInteractionEnabled = true
                     tabNavigationCell.cellCollectionView.dragDelegate = self
                     tabNavigationCell.cellCollectionView.dropDelegate = self
+                    
                 case 2: tabNavigationCell.setSection(section: .Members)
                 default: print("ERROR: IndexPath out of bounds. Setting extra cell to Default.")
+                    
                 }
+                
                 tabNavigationCell.cellCollectionView.delegate = self
                 tabNavigationCell.cellCollectionView.dataSource = self
+                
                 return tabNavigationCell
+                
             } else {
+                
                 print("ERROR: Unable to retrieve a reusableCell for TabNavigationCollectionView. Returning a default cell.")
                 return DefaultCell()
+                
             }
+            
         } else if let collectionView = collectionView as? TabCollectionView {
+            
             switch collectionView.section {
+                
             case .Announcements:
+                
                 if let announcementsCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? AnnouncementsCell {
                     
-                    announcementsCell.announcementsImageView.image = announcementList[indexPath.item].image
-                    announcementsCell.announcementsTitleLabel.text = announcementList[indexPath.item].title
-                    announcementsCell.announcementsBodyLabel.text = announcementList[indexPath.item].body.string
+                    if indexPath.item < pinAnnouncementIndexList.count {
+                        
+                        let index = pinAnnouncementIndexList[indexPath.item]
+                        
+                        announcementsCell.announcementsImageView.image = announcementList[index].image
+                        announcementsCell.announcementsTitleLabel.text = announcementList[index].title
+                        announcementsCell.announcementsBodyLabel.text = announcementList[index].body.string
+                        announcementsCell.announcementsPinButton.isHidden = false
+                        
+                        if announcementList[index].isPublic {
+                            
+                            announcementsCell.announcementsVisibilityButton.isHidden = false
+                            
+                        } else {
+                            
+                            announcementsCell.announcementsVisibilityButton.isHidden = true
+                            
+                        }
+                        
+                    } else {
+                        
+                        let index = nonPinAnnouncementIndexList[indexPath.item-pinAnnouncementIndexList.count]
+                        
+                        announcementsCell.announcementsImageView.image = announcementList[index].image
+                        announcementsCell.announcementsTitleLabel.text = announcementList[index].title
+                        announcementsCell.announcementsBodyLabel.text = announcementList[index].body.string
+                        announcementsCell.announcementsPinButton.isHidden = true
+                        
+                        if announcementList[index].isPublic {
+                            
+                            announcementsCell.announcementsVisibilityButton.isHidden = false
+                            
+                        } else {
+                            
+                            announcementsCell.announcementsVisibilityButton.isHidden = true
+                            
+                        }
+                        
+                    }
                     
                     return announcementsCell
+                    
                 } else {
+                    
                     print("ERROR: Unable to retrieve an AnnouncementsCell. Returning a default cell.")
                     return DefaultCell()
+                    
                 }
+                
             case .ToDo:
+                
                 if let toDoCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? ToDoCell {
+                    
                     if indexPath.item % 2 == 0 {
+                        
                         toDoCell.toDoLabel.text = toDoList[indexPath.item]
                         toDoCell.toDoDeadlineLabel.text = "May 25, 2020"
                         toDoCell.toggleToDo(isCompleted: true)
+                        
                     }
+                    
                     return toDoCell
+                    
                 } else {
+                    
                     print("ERROR: Unable to retrieve a ToDoCell. Returning a default cell.")
                     return DefaultCell()
+                    
                 }
+                
             case .Members:
+                
                 if let membersCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? MembersCell {
+                    
                     if indexPath.item == 0 {
+                        
                         membersCell.toggleMembers(isHighlighted: true)
                         membersCell.membersImageView.image = UIImage(named: "exampleMembersProfileImage")
                         membersCell.membersNameLabel.text = "Manuel Alejandro Martin Callejo"
                         membersCell.membersTitleLabel.text = "FSPA Developer Team - iOS Developer"
+                        
                     }
+                    
                     return membersCell
+                    
                 } else {
+                    
                     print("ERROR: Unable to retrieve a MembersCell. Returning a default cell.")
                     return DefaultCell()
+                    
                 }
+                
             case .Default:
+                
                 if let defaultCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? DefaultCell {
+                    
                     return defaultCell
+                    
                 } else {
+                    
                     print("ERROR: Unable to retrieve a DefaultCell. Returning a default cell.")
                     return DefaultCell()
+                    
                 }
+                
             }
+            
         } else {
+            
             return DefaultCell()
             
         }
@@ -617,46 +749,23 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         
         if let tabCollectionView = collectionView as? TabCollectionView, tabCollectionView.section == .Announcements {
             
-            let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[indexPath.item], completionHandler: { image, title, body, changePin, changeVisibility, shouldDelete in
+            if indexPath.item < pinAnnouncementIndexList.count {
                 
-                if let shouldDelete = shouldDelete, shouldDelete {
-                    
-                    self.announcementList.remove(at: indexPath.item)
-                    tabCollectionView.deleteItems(at: [indexPath])
-                    
-                } else if image != nil || title != nil || body != nil || changePin != nil || changeVisibility != nil {
-                    
-                    if let newImage = image { self.announcementList[indexPath.item].image = newImage }
-                    if let newTitle = title { self.announcementList[indexPath.item].title = newTitle }
-                    if let newBody = body { self.announcementList[indexPath.item].body = newBody }
-                    
-                    if let isPin = changePin {
-                        
-                        print("PIN ANNOUNCEMENT")
-                        
-                    } else {
-                        
-                        print("UNPIN ANNOUNCEMENT")
-                        
-                    }
-                    
-                    if let isVisible = changeVisibility {
-                        
-                        print("ANNOUNCEMENT IS VISIBLE")
-                        
-                    } else {
-                        
-                        print("ANNOUNCEMENT IS HIDDEN")
-                        
-                    }
-                    
-                    tabCollectionView.reloadData()
-                    
-                }
-            
-            })
-            
-            navigationController?.pushViewController(announcementsPageVC, animated: true)
+                let index = pinAnnouncementIndexList[indexPath.item]
+                
+                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index)
+                announcementsPageVC.delegate = self
+                navigationController?.pushViewController(announcementsPageVC, animated: true)
+                
+            } else {
+                
+                let index = nonPinAnnouncementIndexList[indexPath.item-pinAnnouncementIndexList.count]
+                
+                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index)
+                announcementsPageVC.delegate = self
+                navigationController?.pushViewController(announcementsPageVC, animated: true)
+                
+            }
             
         }
         
@@ -782,6 +891,120 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         
     }
 
+}
+
+extension HomeViewController: AnnouncementsPageViewControllerDelegate {
+    
+    func togglePin(forAnnouncementAt index: Int) {
+        
+        print("TOGGLING PIN STATE")
+        
+        if index == -1 {
+            
+            print("ERROR: Unable to perform action. Returned index is out of bounds (-1).")
+            return
+            
+        }
+        
+        announcementList[index].isPin = !announcementList[index].isPin
+        refreshPinAnnouncements()
+        
+        if tabNavigationCollectionView.visibleCells.count == 1,
+            let tabNavigationCell = tabNavigationCollectionView.visibleCells.first as? tabNavigationCell, tabNavigationCell.cellCollectionView.section == .Announcements {
+            
+            tabNavigationCell.cellCollectionView.reloadData()
+            
+        } else {
+            
+            print("ERROR: Unable to refresh announcements. The announcements CollectionView is out of reach.")
+            
+        }
+        
+    }
+    
+    func toggleVisibility(forAnnouncementAt index: Int) {
+        
+        print("TOGGLING VISIBILITY")
+        
+        if index == -1 {
+            
+            print("ERROR: Unable to perform action. Returned index is out of bounds (-1).")
+            return
+            
+        }
+        
+        announcementList[index].isPublic = !announcementList[index].isPublic
+        
+        if tabNavigationCollectionView.visibleCells.count == 1,
+            let tabNavigationCell = tabNavigationCollectionView.visibleCells.first as? tabNavigationCell, tabNavigationCell.cellCollectionView.section == .Announcements {
+            
+            tabNavigationCell.cellCollectionView.reloadData()
+            
+        } else {
+            
+            print("ERROR: Unable to refresh announcements. The announcements CollectionView is out of reach.")
+            
+        }
+        
+    }
+    
+    func editAnnouncement(forAnnouncementAt index: Int, newImage: UIImage?, newTitle: String?, newBody: NSAttributedString?) {
+        
+        print("EDITING ANNOUNCEMENT")
+        
+        if index == -1 {
+            
+            print("ERROR: Unable to perform action. Returned index is out of bounds (-1).")
+            return
+            
+        }
+        
+        if newImage != nil || newTitle != nil || newBody != nil {
+            
+            if let newImage = newImage { self.announcementList[index].image = newImage }
+            if let newTitle = newTitle { self.announcementList[index].title = newTitle }
+            if let newBody = newBody { self.announcementList[index].body = newBody }
+            
+            if tabNavigationCollectionView.visibleCells.count == 1,
+                let tabNavigationCell = tabNavigationCollectionView.visibleCells.first as? tabNavigationCell, tabNavigationCell.cellCollectionView.section == .Announcements {
+                
+                tabNavigationCell.cellCollectionView.reloadData()
+                
+            } else {
+                
+                print("ERROR: Unable to refresh announcements. The announcements CollectionView is out of reach.")
+                
+            }
+            
+        }
+        
+    }
+    
+    func deleteAnnouncement(forAnnouncementAt index: Int) {
+        
+        if index == -1 {
+            
+            print("ERROR: Unable to perform action. Returned index is out of bounds (-1).")
+            return
+            
+        }
+        
+        announcementList.remove(at: index)
+        refreshPinAnnouncements()
+        
+        if tabNavigationCollectionView.visibleCells.count == 1,
+            let tabNavigationCell = tabNavigationCollectionView.visibleCells.first as? tabNavigationCell, tabNavigationCell.cellCollectionView.section == .Announcements {
+            
+            tabNavigationCell.cellCollectionView.reloadData()
+            
+        } else {
+            
+            print("ERROR: Unable to refresh announcements. The announcements CollectionView is out of reach.")
+            
+        }
+        
+    }
+    
 }
 
 

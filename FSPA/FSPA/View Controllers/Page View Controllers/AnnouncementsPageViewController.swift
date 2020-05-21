@@ -13,6 +13,8 @@ struct Announcement {
     var image: UIImage = UIImage.defaultAnnouncementsImage
     var title: String = "Title Text Placeholder"
     var body: NSAttributedString = NSAttributedString(string: "Body Text Placeholder", attributes: [NSAttributedString.Key.font : UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline).pointSize)!)])
+    var isPin: Bool = false
+    var isPublic: Bool = false
     
 }
 
@@ -23,9 +25,11 @@ final class AnnouncementsPageViewController: UIViewController {
     
     private var currentAnnouncement: Announcement = Announcement()
     private var imageWasChanged = false
+    private var announcementIndex: Int = -1
+    
+    weak var delegate: AnnouncementsPageViewControllerDelegate?
     
     lazy private(set) var imagePicker: UIImagePickerController = UIImagePickerController()
-    var completionHandler: ((UIImage?, String?, NSAttributedString?, Bool?, Bool?, Bool?) -> Void)?
     
     lazy private var tapOutGesture: UITapGestureRecognizer = {
         
@@ -77,6 +81,9 @@ final class AnnouncementsPageViewController: UIViewController {
         
         var announcementPublishButton = ToggleButton(toggleButtonOffImage: UIImage.notVisibleEyeIcon, toggleButtonOffImageColor: UIColor.PrimaryCrimson, toggleButtonOnImage: UIImage.visibleEyeIcon, toggleButtonOnImageColor: UIColor.white)
         announcementPublishButton.contentEdgeInsets = UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
+        
+        if currentAnnouncement.isPublic { announcementPublishButton.toggle() }
+        
         announcementPublishButton.addTarget(self, action: #selector(toggleAnnouncementVisibility(sender:)), for: .touchUpInside)
         return announcementPublishButton
         
@@ -88,6 +95,9 @@ final class AnnouncementsPageViewController: UIViewController {
         
         var announcementPinButton = ToggleButton(toggleButtonOffImage: UIImage.unpinIcon, toggleButtonOffImageColor: UIColor.PrimaryCrimson, toggleButtonOnImage: UIImage.pinIcon, toggleButtonOnImageColor: UIColor.white)
         announcementPinButton.contentEdgeInsets = UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
+        
+        if currentAnnouncement.isPin { announcementPinButton.toggle() }
+        
         announcementPinButton.addTarget(self, action: #selector(toggleAnnouncementPin(sender:)), for: .touchUpInside)
         return announcementPinButton
         
@@ -202,16 +212,16 @@ final class AnnouncementsPageViewController: UIViewController {
     
     convenience init() {
         
-        self.init(announcement: nil, completionHandler: nil)
+        self.init(announcement: nil, index: nil)
         
     }
     
-    init(announcement: Announcement?, completionHandler: ((UIImage?, String?, NSAttributedString?, Bool?, Bool?, Bool?) -> Void)?) {
+    init(announcement: Announcement?, index: Int?) {
         
         super.init(nibName: nil, bundle: nil)
         
         if let newAnnouncement = announcement { currentAnnouncement = newAnnouncement }
-        if let newCompletionHandler = completionHandler { self.completionHandler = newCompletionHandler }
+        if let newIndex = index { self.announcementIndex = newIndex }
         
     }
     
@@ -355,7 +365,6 @@ final class AnnouncementsPageViewController: UIViewController {
             
             alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
                 
-                self.completionHandler?(nil, nil, nil, nil, nil, false)
                 self.navigationController?.popViewController(animated: true)
                 
             }))
@@ -364,15 +373,6 @@ final class AnnouncementsPageViewController: UIViewController {
             
         } else {
             
-            var imageToReturn: UIImage?
-            var titleToReturn: String?
-            var bodyToReturn: NSAttributedString?
-            
-            if imageWasChanged { imageToReturn = announcementImageView.innerImageView.image }
-            if currentAnnouncement.title != announcementTitleTextView.text { titleToReturn = announcementTitleTextView.text }
-            if !currentAnnouncement.body.isEqual(to: announcementBodyTextView.attributedText) { bodyToReturn = announcementBodyTextView.attributedText}
-            
-            completionHandler?(imageToReturn, titleToReturn, bodyToReturn, nil, nil, false)
             navigationController?.popViewController(animated: true)
             
         }
@@ -440,7 +440,7 @@ final class AnnouncementsPageViewController: UIViewController {
             
                 self.announcementPublishButton.transform = CGAffineTransform.identity
                 
-                if self.announcementPublishButton.toggleState { self.announcementPublishButton.toggle() }
+                if self.announcementPublishButton.toggleState { self.toggleAnnouncementVisibility(sender: self.announcementPublishButton) }
             
             })
             
@@ -466,7 +466,36 @@ final class AnnouncementsPageViewController: UIViewController {
                             self.announcementDeleteButton.transform = CGAffineTransform.identity.scaledBy(x: 0.5, y: 0.5)
                             self.announcementImageView.innerEditingButton.alpha = 0.0
                             
-            }, completion: nil)
+            }, completion: { _ in
+                
+                var imageToReturn: UIImage?
+                var titleToReturn: String?
+                var bodyToReturn: NSAttributedString?
+            
+                if self.imageWasChanged {
+                    
+                    imageToReturn = self.announcementImageView.innerImageView.image
+                    self.imageWasChanged = false
+                    
+                }
+                
+                if self.announcementTitleTextView.text != self.currentAnnouncement.title {
+                    
+                    titleToReturn = self.announcementTitleTextView.text
+                    self.currentAnnouncement.title = titleToReturn!
+                    
+                }
+                
+                if !self.announcementBodyTextView.attributedText.isEqual(self.currentAnnouncement.body) {
+                    
+                    bodyToReturn = self.announcementBodyTextView.attributedText
+                    self.currentAnnouncement.body = bodyToReturn!
+                    
+                }
+                
+                self.delegate?.editAnnouncement(forAnnouncementAt: self.announcementIndex, newImage: imageToReturn, newTitle: titleToReturn, newBody: bodyToReturn)
+            
+            })
             
         }
         
@@ -474,7 +503,11 @@ final class AnnouncementsPageViewController: UIViewController {
     
     @objc private func toggleAnnouncementVisibility(sender: ToggleButton) {
         
-        if announcementPublishButton.toggleState {
+        if announcementPublishButton.toggleState && announcementEditButton.toggleState {
+            
+            delegate?.toggleVisibility(forAnnouncementAt: announcementIndex)
+            
+        } else if announcementPublishButton.toggleState && !announcementEditButton.toggleState {
             
             let alert = UIAlertController(title: "Warning", message: "If you proceed, the announcement will be public for all members.", preferredStyle: .alert)
             
@@ -486,7 +519,7 @@ final class AnnouncementsPageViewController: UIViewController {
             
             alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
                 
-                // Future Action
+                self.delegate?.toggleVisibility(forAnnouncementAt: self.announcementIndex)
                 
             }))
             
@@ -504,7 +537,7 @@ final class AnnouncementsPageViewController: UIViewController {
             
             alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
                 
-                // Future Acion
+                self.delegate?.toggleVisibility(forAnnouncementAt: self.announcementIndex)
                 
             }))
             
@@ -516,7 +549,7 @@ final class AnnouncementsPageViewController: UIViewController {
     
     @objc private func toggleAnnouncementPin(sender: ToggleButton) {
         
-        // Future Action
+        delegate?.togglePin(forAnnouncementAt: announcementIndex)
         
     }
     
@@ -564,7 +597,7 @@ final class AnnouncementsPageViewController: UIViewController {
         
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
             
-            self.completionHandler?(nil, nil, nil, nil, nil, true)
+            self.delegate?.deleteAnnouncement(forAnnouncementAt: self.announcementIndex)
             self.navigationController?.popViewController(animated: true)
             
         }))
