@@ -20,38 +20,32 @@ class LoginPageViewController: UIViewController {
         return welcomeBackground
     }()
     
-    lazy var emailLabel: UILabel = {
-        var emailLabel = UILabel()
-        emailLabel.text = "Email"
-        emailLabel.numberOfLines = 1
-        emailLabel.textColor = UIColor.AnalCream
-        emailLabel.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: view.bounds.height/35)!)
-        emailLabel.textAlignment = .left
-        return emailLabel
+    lazy var loginLabel: UILabel = {
+        var loginLabel = UILabel()
+        loginLabel.text = "Log in to your account"
+        loginLabel.numberOfLines = 1
+        loginLabel.textColor = UIColor.AnalCream
+        loginLabel.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: view.bounds.height/40)!)
+        loginLabel.textAlignment = .center
+        return loginLabel
     }()
     
     lazy var emailField: UITextField = {
         var emailField = UITextField()
         emailField.textColor = UIColor.PrimaryCrimson
+        emailField.placeholder = "Email"
+        emailField.borderStyle = .roundedRect
         emailField.backgroundColor = UIColor.BgGray
         emailField.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: view.bounds.height/40)!)
         emailField.addShadowAndRoundCorners(shadowOffset: CGSize(width: 5.0, height: 5.0))
         return emailField
     }()
     
-    lazy var passwordLabel: UILabel = {
-        var passwordLabel = UILabel()
-        passwordLabel.text = "Password"
-        passwordLabel.numberOfLines = 1
-        passwordLabel.textColor = UIColor.AnalCream
-        passwordLabel.textAlignment = .left
-        passwordLabel.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: view.bounds.height/35)!)
-        return passwordLabel
-    }()
-    
     lazy var passwordField: UITextField = {
         var passwordField = UITextField()
         passwordField.textColor = UIColor.PrimaryCrimson
+        passwordField.placeholder = "Password"
+        passwordField.borderStyle = .roundedRect
         passwordField.backgroundColor = UIColor.BgGray
         passwordField.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: view.bounds.height/40)!)
         passwordField.addShadowAndRoundCorners(shadowOffset: CGSize(width: 5.0, height: 5.0))
@@ -62,7 +56,7 @@ class LoginPageViewController: UIViewController {
     lazy var loginButton: UIButton = {
         var loginButton = UIButton()
         loginButton.setTitle("Login", for: .normal)
-        loginButton.addShadowAndRoundCorners(shadowOffset: CGSize(width: 5.0, height: 5.0))
+        loginButton.addShadowAndRoundCorners(shadowOffset: CGSize(width: 2.0, height: 2.0))
         loginButton.titleLabel?.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: view.bounds.height/40)!)
         loginButton.backgroundColor = UIColor.AnalCream
         loginButton.setTitleColor(UIColor.PrimaryCrimson, for: .normal)
@@ -84,45 +78,45 @@ class LoginPageViewController: UIViewController {
         
         view.addSubview(welcomeBackground)
         welcomeBackground.translatesAutoresizingMaskIntoConstraints = false
-        welcomeBackground.topAnchor.constraint(equalTo: view.topAnchor, constant: view.bounds.height/4).isActive = true
-        welcomeBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.bounds.height/4).isActive = true
-        welcomeBackground.heightAnchor.constraint(equalToConstant: view.bounds.height/2).isActive = true
-        welcomeBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width/10).isActive = true
-        welcomeBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width/10).isActive = true
+        welcomeBackground.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.4).isActive = true
+        welcomeBackground.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.8).isActive = true
+        welcomeBackground.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        welcomeBackground.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
-        welcomeBackground.addSubview(emailLabel)
-        emailLabel.translatesAutoresizingMaskIntoConstraints = false
-        emailLabel.topAnchor.constraint(equalTo: welcomeBackground.topAnchor, constant: view.bounds.height/20).isActive = true
-        emailLabel.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant: view.bounds.width/10).isActive = true
-        emailLabel.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -view.bounds.width/10).isActive = true
+        welcomeBackground.frame = CGRect(x: 0, y: 0, width: view.bounds.width * 0.8, height: view.bounds.height * 0.4)
+
+        welcomeBackground.addSubview(loginLabel)
+        loginLabel.translatesAutoresizingMaskIntoConstraints = false
+        loginLabel.topAnchor.constraint(equalTo: welcomeBackground.topAnchor, constant: welcomeBackground.bounds.height * 0.1111).isActive = true
+        loginLabel.heightAnchor.constraint(equalToConstant: welcomeBackground.bounds.height * 0.1111).isActive = true
+        loginLabel.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant: welcomeBackground.bounds.width/15).isActive = true
+        loginLabel.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -welcomeBackground.bounds.width/15).isActive = true
         
         welcomeBackground.addSubview(emailField)
         emailField.translatesAutoresizingMaskIntoConstraints = false
-        emailField.topAnchor.constraint(equalTo: emailLabel.bottomAnchor).isActive = true
-        emailField.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant: view.bounds.width/10).isActive = true
-        emailField.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -view.bounds.width/10).isActive = true
-        
-        welcomeBackground.addSubview(passwordLabel)
-        passwordLabel.translatesAutoresizingMaskIntoConstraints = false
-        passwordLabel.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: view.bounds.height/30).isActive = true
-        passwordLabel.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant: view.bounds.width/10).isActive = true
-        passwordLabel.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -view.bounds.width/10).isActive = true
-        
+        emailField.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: welcomeBackground.bounds.height * 0.1111).isActive = true
+        emailField.heightAnchor.constraint(equalToConstant: welcomeBackground.bounds.height * 0.1111).isActive = true
+        emailField.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant:  welcomeBackground.bounds.width/10).isActive = true
+        emailField.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -welcomeBackground.bounds.width/10).isActive = true
+
         welcomeBackground.addSubview(passwordField)
         passwordField.translatesAutoresizingMaskIntoConstraints = false
-        passwordField.topAnchor.constraint(equalTo: passwordLabel.bottomAnchor).isActive = true
-        passwordField.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant: view.bounds.width/10).isActive = true
-        passwordField.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -view.bounds.width/10).isActive = true
-        
+        passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: welcomeBackground.bounds.height * 0.1111).isActive = true
+        passwordField.heightAnchor.constraint(equalToConstant: welcomeBackground.bounds.height * 0.1111).isActive = true
+        passwordField.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant:  welcomeBackground.bounds.width/10).isActive = true
+        passwordField.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -welcomeBackground.bounds.width/10).isActive = true
+
         welcomeBackground.addSubview(loginButton)
         loginButton.translatesAutoresizingMaskIntoConstraints = false
-        loginButton.bottomAnchor.constraint(equalTo: welcomeBackground.bottomAnchor, constant: -view.bounds.height/40).isActive = true
-        loginButton.trailingAnchor.constraint(equalTo: passwordField.trailingAnchor).isActive = true
+        loginButton.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant:  welcomeBackground.bounds.height * 0.1111).isActive = true
+        loginButton.heightAnchor.constraint(equalToConstant: welcomeBackground.bounds.height * 0.1111).isActive = true
+        loginButton.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant:  welcomeBackground.bounds.width/10).isActive = true
+        loginButton.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -welcomeBackground.bounds.width/10).isActive = true
         
-        welcomeBackground.addSubview(hidePassword)
-        hidePassword.translatesAutoresizingMaskIntoConstraints = false
-        hidePassword.leadingAnchor.constraint(equalTo: passwordField.trailingAnchor).isActive = true
-        hidePassword.bottomAnchor.constraint(equalTo: passwordField.bottomAnchor).isActive = true
+//        welcomeBackground.addSubview(hidePassword)
+//        hidePassword.translatesAutoresizingMaskIntoConstraints = false
+//        hidePassword.leadingAnchor.constraint(equalTo: passwordField.trailingAnchor).isActive = true
+//        hidePassword.bottomAnchor.constraint(equalTo: passwordField.bottomAnchor).isActive = true
         
     }
     

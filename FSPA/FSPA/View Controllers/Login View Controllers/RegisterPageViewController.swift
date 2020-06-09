@@ -268,7 +268,7 @@ class RegisterPageViewController: UIViewController {
                     
                     let fullName = self.firstNameField.text! + " " + self.lastNameField.text!
                     
-                    let userAttrs = ["fullName": fullName, "firstName": self.firstNameField.text!, "lastName": self.lastNameField.text!]
+                    let userAttrs = ["fullName": fullName, "firstName": self.firstNameField.text!, "lastName": self.lastNameField.text!, "currentWorkspace": ""]
                     
                     let ref = Database.database().reference().child("users").child(newUser.uid)
                     

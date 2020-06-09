@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 struct Announcement {
     
@@ -15,8 +16,11 @@ struct Announcement {
     var body: NSAttributedString = NSAttributedString(string: "Body Text Placeholder", attributes: [NSAttributedString.Key.font : UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline).pointSize)!)])
     var isPin: Bool = false
     var isPublic: Bool = false
+    var uid: String = ""
     
 }
+
+//var admin: String
 
 final class AnnouncementsPageViewController: UIViewController {
     
@@ -26,6 +30,7 @@ final class AnnouncementsPageViewController: UIViewController {
     private var currentAnnouncement: Announcement = Announcement()
     private var imageWasChanged = false
     private var announcementIndex: Int = -1
+    private var isAdmin: Bool = false
     
     weak var delegate: AnnouncementsPageViewControllerDelegate?
     
@@ -212,18 +217,20 @@ final class AnnouncementsPageViewController: UIViewController {
     
     convenience init() {
         
-        self.init(announcement: nil, index: nil)
+        self.init(announcement: nil, index: nil, admin: nil)
         
     }
     
-    init(announcement: Announcement?, index: Int?) {
+    init(announcement: Announcement?, index: Int?, admin: Bool?) {
         
         super.init(nibName: nil, bundle: nil)
         
         if let newAnnouncement = announcement { currentAnnouncement = newAnnouncement }
         if let newIndex = index { self.announcementIndex = newIndex }
+        if let newAdmin = admin { self.isAdmin = newAdmin }
         
     }
+    
     
     required init?(coder: NSCoder) {
         
@@ -243,6 +250,7 @@ final class AnnouncementsPageViewController: UIViewController {
         
         view.backgroundColor = .white
         
+        print(currentAnnouncement.uid)
         view.addSubview(announcementScrollView)
         announcementScrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         announcementScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
@@ -264,7 +272,7 @@ final class AnnouncementsPageViewController: UIViewController {
         announcementCloseButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: horizontalEdgeInset).isActive = true
         announcementCloseButton.widthAnchor.constraint(equalToConstant: .getPercentageWidth(percentage: 9)).isActive = true
         announcementCloseButton.heightAnchor.constraint(equalTo: announcementCloseButton.widthAnchor).isActive = true
-        
+                
         view.addSubview(announcementPinButton)
         announcementPinButton.translatesAutoresizingMaskIntoConstraints = false
         announcementPinButton.topAnchor.constraint(equalTo: announcementCloseButton.bottomAnchor, constant: verticalEdgeInset).isActive = true
@@ -292,6 +300,13 @@ final class AnnouncementsPageViewController: UIViewController {
         announcementDeleteButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -horizontalEdgeInset).isActive = true
         announcementDeleteButton.widthAnchor.constraint(equalTo: announcementCloseButton.widthAnchor).isActive = true
         announcementDeleteButton.heightAnchor.constraint(equalTo: announcementDeleteButton.widthAnchor).isActive = true
+        
+        if(!isAdmin){
+            announcementEditButton.isHidden = true
+            //announcementCloseButton.isHidden = true
+            announcementPinButton.isHidden = true
+            announcementPublishButton.isHidden = true
+        }
     }
     
     @objc private func keyboardWillShow(notification: NSNotification) {
@@ -357,6 +372,28 @@ final class AnnouncementsPageViewController: UIViewController {
     
     @objc private func closeAnnouncement(sender: BubbleButton) {
         
+        let ref = Database.database().reference()
+               let uid = Auth.auth().currentUser!.uid
+               
+               ref.child("users/\(uid)/currentWorkspace").observeSingleEvent(of: .value, with: { (snapshot) in
+                   // Get user value
+                   let value = snapshot.value as? String
+                   
+                   let currentWorkspace = value!
+        
+                let body = self.currentAnnouncement.body.string
+                let annAttrs = ["title": self.currentAnnouncement.title, "body": body, "isPin": self.currentAnnouncement.isPin, "isPublic": self.currentAnnouncement.isPublic] as [String : Any]
+                                              
+                ref.child("workspaces/\(currentWorkspace)/announcements/\(self.currentAnnouncement.uid)").setValue(annAttrs) { (error, ref) in
+                           
+                           if let error = error {
+                               
+                               assertionFailure(error.localizedDescription)
+                           }
+                       }
+        }
+        )
+        
         if announcementEditButton.toggleState {
             
             let alert = UIAlertController(title: "Warning", message: "If you proceed, any edits done on the announcement will be lost.", preferredStyle: .alert)
@@ -392,7 +429,7 @@ final class AnnouncementsPageViewController: UIViewController {
             }))
             
             alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
-    
+                self.currentAnnouncement.isPublic = false
                 self.toggleAnnouncementEditingHelper()
                 
             }))
@@ -520,6 +557,7 @@ final class AnnouncementsPageViewController: UIViewController {
             alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
                 
                 self.delegate?.toggleVisibility(forAnnouncementAt: self.announcementIndex)
+                self.currentAnnouncement.isPublic = true
                 
             }))
             
@@ -538,6 +576,7 @@ final class AnnouncementsPageViewController: UIViewController {
             alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
                 
                 self.delegate?.toggleVisibility(forAnnouncementAt: self.announcementIndex)
+                self.currentAnnouncement.isPublic = false
                 
             }))
             
@@ -591,11 +630,32 @@ final class AnnouncementsPageViewController: UIViewController {
     
     @objc private func deleteAnnouncement(sender: BubbleButton) {
         
+        
+        
         let alert = UIAlertController(title: "Warning", message: "If you proceed, this announcement will be deleted indifinitely.", preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in
+            
+            let ref = Database.database().reference()
+                   let uid = Auth.auth().currentUser!.uid
+                   
+                   ref.child("users/\(uid)/currentWorkspace").observeSingleEvent(of: .value, with: { (snapshot) in
+                       // Get user value
+                       let value = snapshot.value as? String
+                       
+                       let currentWorkspace = value!
+                                                  
+                    ref.child("workspaces/\(currentWorkspace)/announcements/\(self.currentAnnouncement.uid)").removeValue() { (error, ref) in
+                               
+                               if let error = error {
+                                   
+                                   assertionFailure(error.localizedDescription)
+                               }
+                           }
+            }
+            )
             
             self.delegate?.deleteAnnouncement(forAnnouncementAt: self.announcementIndex)
             self.navigationController?.popViewController(animated: true)

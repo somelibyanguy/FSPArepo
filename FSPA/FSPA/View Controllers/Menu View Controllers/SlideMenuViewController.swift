@@ -72,6 +72,16 @@ class SlideMenuViewController: UIViewController, UICollectionViewDataSource, UIC
 		
 		view.backgroundColor = UIColor.BgGray
 		
+		let ref = Database.database().reference()
+	    let uid = Auth.auth().currentUser!.uid
+		
+        ref.child("users/\(uid)").observe(.childChanged) { (snapshot) in
+			if(snapshot.key == "currentWorkspace"){
+				self.getWorkspaces()
+			}
+            
+        }
+		
 		getWorkspaces()
 		
 		cell = Workspace()
@@ -107,6 +117,9 @@ class SlideMenuViewController: UIViewController, UICollectionViewDataSource, UIC
 	private func getWorkspaces(){
 		let ref = Database.database().reference()
 		let uid = Auth.auth().currentUser!.uid
+		
+		workspaces.removeAll()
+		workspaceNames.removeAll()
 		ref.child("users/\(uid)/workspaces").observeSingleEvent(of: .value, with: { (snapshot) in
 			if snapshot.childrenCount > 0 {
 				for data in snapshot.children.allObjects as! [DataSnapshot] {

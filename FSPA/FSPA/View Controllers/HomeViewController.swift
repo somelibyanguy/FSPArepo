@@ -31,6 +31,16 @@ final class HomeViewController: UIViewController {
         
     }()
     
+    lazy private(set) var sideView: UIView = {
+        
+        var sideView = UIView()
+        sideView.backgroundColor = UIColor.BgGray
+        sideView.alpha = 0.1
+        sideView.accessibilityIdentifier = "homeVC/sideView"
+        return sideView
+        
+    }()
+    
     lazy private(set) var topViewContentView: UIView = {
         
         var topView = UIView()
@@ -132,7 +142,10 @@ final class HomeViewController: UIViewController {
     private var toDoList: [String] = ["Example 1", "Very long toDo title to showcase functionality", "Completed toDo"]
     
     lazy private(set) var edgeFadeView: UIView = UIView()
-    
+    private var currentWorkspace = ""
+    private var foundWorkspace = 0
+    private var isAdmin = false
+
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -274,6 +287,19 @@ final class HomeViewController: UIViewController {
         addCellButton.widthAnchor.constraint(equalToConstant: .getPercentageWidth(percentage: 14)).isActive = true
         addCellButton.heightAnchor.constraint(equalTo: addCellButton.widthAnchor).isActive = true
         
+        view.addSubview(sideView)
+        sideView.translatesAutoresizingMaskIntoConstraints = false
+        sideView.topAnchor.constraint(equalTo: announcementsButton.bottomAnchor).isActive = true
+        sideView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        sideView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        sideView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.99).isActive = true
+                
+        ref.child("workspaces/\(currentWorkspace)").observe(.childChanged) { (snapshot) in
+            if(snapshot.key == "announcements"){
+                self.initialiseWorkspace()
+            }
+        }
+        
     }
     
     public func initialiseWorkspace() {
@@ -282,23 +308,138 @@ final class HomeViewController: UIViewController {
         let uid = Auth.auth().currentUser!.uid
         var isAdmin = Bool()
         
+        announcementList.removeAll()
+        
         ref.child("users/\(uid)/currentWorkspace").observeSingleEvent(of: .value, with: { (snapshot) in
             // Get user value
             let value = snapshot.value as? String
             
-            let currentWorkspace = value
-            if(currentWorkspace != ""){
+            self.currentWorkspace = value!
+            if(self.currentWorkspace != ""){
                 
-                print(currentWorkspace)
+                print(self.currentWorkspace)
                 
-                ref.child("users/\(uid)/workspaces/\(currentWorkspace!)").observeSingleEvent(of: .value, with: { (snapshot) in
+                if(self.foundWorkspace == 0){
+                ref.child("workspaces/\(self.currentWorkspace)").observe(.childChanged) { (snapshot) in
+                    if(snapshot.key == "announcements"){
+                        self.initialiseWorkspace()
+                    }
+                }
+                    self.foundWorkspace = 1
+                }
+                
+                ref.child("users/\(uid)/workspaces/\(self.currentWorkspace)").observeSingleEvent(of: .value, with: { (snapshot) in
                     let value = snapshot.value as! [String: Any]
                     
-                    isAdmin = value["isAdmin"] as! Bool
-                    if(isAdmin){
+                    self.isAdmin = value["isAdmin"] as! Bool
+                    if(self.isAdmin){
+                        ref.child("workspaces/\(self.currentWorkspace)/announcements").observeSingleEvent(of: .value, with: { (snapshot) in
+                            if snapshot.childrenCount > 0 {
+                                for data in snapshot.children.allObjects as! [DataSnapshot] {
+                                    if let value = data.value as? [String: Any] {
+                                        let uid = data.key
+                                        print(uid)
+                                        let title = value["title"] as! String
+                                        let body = value["body"] as! String
+                                        let actualBody = NSAttributedString(string: body, attributes: [NSAttributedString.Key.font : UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline).pointSize)!)])
+                                        let isPin = value["isPin"] as! Bool
+                                        let isPublic = value["isPublic"] as! Bool
+                                        
+                                        let image = UIImage.defaultAnnouncementsImage
+                                        
+                                        let announcementToAdd = Announcement(image: image, title: title, body: actualBody, isPin: isPin, isPublic: isPublic, uid: uid)
+                                        
+                                        
+                                        self.announcementList.append(announcementToAdd)
+                                        
+                                        
+                                        
+                                        
+                                        
+                                    }
+                                }
+                            }
+                            DispatchQueue.global(qos: .background).async {
+                                
+                                // Background Thread
+                                
+                                DispatchQueue.main.async {
+                                    // Run UI Updates
+                                    if self.tabNavigationCollectionView.visibleCells.count == 1, let tabNavigationCell = self.tabNavigationCollectionView.visibleCells.first as? tabNavigationCell {
+                                        
+                                        switch tabNavigationCell.cellCollectionView.section {
+                                            
+                                        case .Announcements:
+                                            print("here")
+                                            self.refreshPinAnnouncements()
+                                            tabNavigationCell.cellCollectionView.reloadData()
+                                            
+                                            
+                                        case .ToDo: print("ERROR: Trying to add a cell to a toDo collectionView.")
+                                        case .Members: print("ERROR: Trying to add a cell to a members collectionView.")
+                                        case .Default: print("ERROR: Trying to add a cell to a default collectionView.")
+                                            
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                            
+                        })
                         // self.editButton.isHidden = false
                     }else{
-                        // self.editButton.isHidden = true
+                        ref.child("workspaces/\(self.currentWorkspace)/announcements").observeSingleEvent(of: .value, with: { (snapshot) in
+                            if snapshot.childrenCount > 0 {
+                                for data in snapshot.children.allObjects as! [DataSnapshot] {
+                                    if let value = data.value as? [String: Any] {
+                                        let uid = data.key
+                                        print(uid)
+                                        let title = value["title"] as! String
+                                        let body = value["body"] as! String
+                                        let actualBody = NSAttributedString(string: body, attributes: [NSAttributedString.Key.font : UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline).pointSize)!)])
+                                        let isPin = value["isPin"] as! Bool
+                                        let isPublic = value["isPublic"] as! Bool
+                                        
+                                        let image = UIImage.defaultAnnouncementsImage
+                                        
+                                        let announcementToAdd = Announcement(image: image, title: title, body: actualBody, isPin: isPin, isPublic: isPublic, uid: uid)
+                                        
+                                        if(isPublic){
+                                            self.announcementList.append(announcementToAdd)
+                                        }
+                                        
+                                        
+                                        
+                                        
+                                    }
+                                }
+                            }
+                            DispatchQueue.global(qos: .background).async {
+                                
+                                // Background Thread
+                                
+                                DispatchQueue.main.async {
+                                    // Run UI Updates
+                                    if self.tabNavigationCollectionView.visibleCells.count == 1, let tabNavigationCell = self.tabNavigationCollectionView.visibleCells.first as? tabNavigationCell {
+                                        
+                                        switch tabNavigationCell.cellCollectionView.section {
+                                            
+                                        case .Announcements:
+                                            self.refreshPinAnnouncements()
+                                            tabNavigationCell.cellCollectionView.reloadData()
+                                            
+                                            
+                                        case .ToDo: print("ERROR: Trying to add a cell to a toDo collectionView.")
+                                        case .Members: print("ERROR: Trying to add a cell to a members collectionView.")
+                                        case .Default: print("ERROR: Trying to add a cell to a default collectionView.")
+                                            
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                            
+                        })
                     }
                     
                 }) { (error) in
@@ -425,7 +566,23 @@ final class HomeViewController: UIViewController {
                 
             case .Announcements:
                 
-                announcementList.insert(Announcement(), at: 0)
+                let title: String = "Title Text Placeholder"
+                let annAttrs = ["title": title, "body": "Body Text PlaceHolder", "isPin": false, "isPublic": false] as [String : Any]
+                
+                let uuid = UUID()
+                
+                let ref = Database.database().reference().child("workspaces").child(self.currentWorkspace).child("announcements").child(uuid.uuidString)
+                
+                ref.setValue(annAttrs) { (error, ref) in
+                    
+                    if let error = error {
+                        
+                        assertionFailure(error.localizedDescription)
+                    }
+                }
+                print(uuid)
+                announcementList.insert(Announcement(uid: uuid.uuidString), at: 0)
+                print(announcementList[0].uid)
                 refreshPinAnnouncements()
                 tabNavigationCell.cellCollectionView.reloadData()
                 
@@ -591,6 +748,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+        print(1)
         if let collectionView = collectionView as? TabNavigationCollectionView {
             
             if let tabNavigationCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.cellID, for: indexPath) as? tabNavigationCell {
@@ -639,6 +797,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                         announcementsCell.announcementsBodyLabel.text = announcementList[index].body.string
                         announcementsCell.announcementsPinButton.isHidden = false
                         
+                        if(isAdmin){
                         if announcementList[index].isPublic {
                             
                             announcementsCell.announcementsVisibilityButton.isHidden = false
@@ -648,9 +807,9 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                             announcementsCell.announcementsVisibilityButton.isHidden = true
                             
                         }
+                        }
                         
                     } else {
-                        
                         let index = nonPinAnnouncementIndexList[indexPath.item-pinAnnouncementIndexList.count]
                         
                         announcementsCell.announcementsImageView.image = announcementList[index].image
@@ -658,6 +817,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                         announcementsCell.announcementsBodyLabel.text = announcementList[index].body.string
                         announcementsCell.announcementsPinButton.isHidden = true
                         
+                        if(isAdmin){
                         if announcementList[index].isPublic {
                             
                             announcementsCell.announcementsVisibilityButton.isHidden = false
@@ -666,6 +826,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                             
                             announcementsCell.announcementsVisibilityButton.isHidden = true
                             
+                        }
                         }
                         
                     }
@@ -753,7 +914,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                 
                 let index = pinAnnouncementIndexList[indexPath.item]
                 
-                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index)
+                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index, admin: isAdmin)
                 announcementsPageVC.delegate = self
                 navigationController?.pushViewController(announcementsPageVC, animated: true)
                 
@@ -761,7 +922,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                 
                 let index = nonPinAnnouncementIndexList[indexPath.item-pinAnnouncementIndexList.count]
                 
-                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index)
+                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index, admin: isAdmin)
                 announcementsPageVC.delegate = self
                 navigationController?.pushViewController(announcementsPageVC, animated: true)
                 
@@ -890,7 +1051,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         }
         
     }
-
+    
 }
 
 extension HomeViewController: AnnouncementsPageViewControllerDelegate {

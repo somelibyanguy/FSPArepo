@@ -71,6 +71,8 @@ class CreateWorkspaceViewController: UIViewController {
             
         })
         
+        self.dismiss(animated: true)
+        
     }
     
     

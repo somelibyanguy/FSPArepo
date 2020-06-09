@@ -21,7 +21,7 @@
         
         lazy var welcomeLabel: UILabel = {
             var welcomeLabel = UILabel()
-            welcomeLabel.text = "Welcome to the passport app. Log in or register below!"
+            welcomeLabel.text = "Welcome to FSPA"
             welcomeLabel.lineBreakMode = .byWordWrapping
             welcomeLabel.numberOfLines = 10
             welcomeLabel.textColor = UIColor.AnalCream
@@ -29,6 +29,17 @@
             welcomeLabel.textAlignment = .center
             return welcomeLabel
         }()
+        
+        lazy var signLabel: UILabel = {
+                   var signLabel = UILabel()
+                   signLabel.text = "Go ahead and log in to your account or create a new one"
+                   signLabel.lineBreakMode = .byWordWrapping
+                   signLabel.numberOfLines = 10
+                   signLabel.textColor = UIColor.AnalCream
+                   signLabel.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "HelveticaNeue", size: view.bounds.height/40)!)
+                   signLabel.textAlignment = .center
+                   return signLabel
+               }()
         
         lazy var loginButton: UIButton = {
             var loginButton = UIButton()
@@ -58,29 +69,49 @@
             
             view.addSubview(welcomeBackground)
             welcomeBackground.translatesAutoresizingMaskIntoConstraints = false
-            welcomeBackground.topAnchor.constraint(equalTo: view.topAnchor, constant: view.bounds.height/4).isActive = true
-            welcomeBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.bounds.height/4).isActive = true
+           // welcomeBackground.topAnchor.constraint(equalTo: view.topAnchor, constant: view.bounds.height/4).isActive = true
+           // welcomeBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.bounds.height/4).isActive = true
             welcomeBackground.heightAnchor.constraint(equalToConstant: view.bounds.height/2).isActive = true
-            welcomeBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width/10).isActive = true
-            welcomeBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width/10).isActive = true
+            welcomeBackground.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.8).isActive = true
+            welcomeBackground.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            welcomeBackground.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            //welcomeBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width/10).isActive = true
+           // welcomeBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width/10).isActive = true
             
+            welcomeBackground.frame = CGRect(x: 0, y: 0, width: view.bounds.width * 0.8, height: view.bounds.height/2)
+                        
             welcomeBackground.addSubview(welcomeLabel)
             welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
-            welcomeLabel.topAnchor.constraint(equalTo: welcomeBackground.topAnchor, constant: view.bounds.height/20).isActive = true
-            welcomeLabel.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant: view.bounds.width/10).isActive = true
-            welcomeLabel.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -view.bounds.width/10).isActive = true
+            welcomeLabel.topAnchor.constraint(equalTo: welcomeBackground.topAnchor, constant: welcomeBackground.bounds.height * 0.1).isActive = true
+            welcomeLabel.heightAnchor.constraint(equalToConstant: welcomeBackground.bounds.height * 0.1).isActive = true
+            welcomeLabel.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant: welcomeBackground.bounds.width/15).isActive = true
+            welcomeLabel.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -welcomeBackground.bounds.width/15).isActive = true
+            
+            welcomeBackground.addSubview(signLabel)
+            signLabel.translatesAutoresizingMaskIntoConstraints = false
+            signLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: welcomeBackground.bounds.height * 0.1).isActive = true
+            signLabel.heightAnchor.constraint(equalToConstant: welcomeBackground.bounds.height * 0.15).isActive = true
+            signLabel.leadingAnchor.constraint(equalTo: welcomeBackground.leadingAnchor, constant: welcomeBackground.bounds.width/7).isActive = true
+            signLabel.trailingAnchor.constraint(equalTo: welcomeBackground.trailingAnchor, constant: -welcomeBackground.bounds.width/7).isActive = true
             
             welcomeBackground.addSubview(loginButton)
             loginButton.translatesAutoresizingMaskIntoConstraints = false
             loginButton.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor).isActive = true
             loginButton.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor).isActive = true
+            loginButton.heightAnchor.constraint(equalToConstant: welcomeBackground.bounds.height * 0.15).isActive = true
+            loginButton.topAnchor.constraint(equalTo: signLabel.bottomAnchor, constant: welcomeBackground.bounds.height * 0.1).isActive = true
             
             welcomeBackground.addSubview(registerButton)
             registerButton.translatesAutoresizingMaskIntoConstraints = false
-            registerButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: view.bounds.height/20).isActive = true
-            registerButton.bottomAnchor.constraint(equalTo: welcomeBackground.bottomAnchor, constant: -view.bounds.height/20).isActive = true
+            registerButton.heightAnchor.constraint(equalToConstant: welcomeBackground.bounds.height * 0.15).isActive = true
+            registerButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: welcomeBackground.bounds.height * 0.05).isActive = true
             registerButton.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor).isActive = true
             registerButton.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor).isActive = true
+            
+
+            
+
+            
         }
         
         @objc func login(_ sender: UIButton!){
