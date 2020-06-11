@@ -73,10 +73,23 @@ final class AnnouncementsPageViewController: UIViewController {
         
         let edgeInset: CGFloat = .getPercentageWidth(percentage: 2.5)
         
-        var announcementEditButton = ToggleButton(toggleButtonOffImage: UIImage.editPencilIcon, toggleButtonOffImageColor: UIColor.PrimaryCrimson, toggleButtonOnImage: UIImage.checkMarkIcon, toggleButtonOnImageColor: UIColor.white)
+        var announcementEditButton = ToggleButton(toggleButtonOffImage: UIImage.editPencilIcon, toggleButtonOffImageColor: UIColor.PrimaryCrimson, toggleButtonOnImage: UIImage.floppyDiskSaveIcon, toggleButtonOnImageColor: UIColor.white)
         announcementEditButton.contentEdgeInsets = UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
         announcementEditButton.addTarget(self, action: #selector(toggleAnnouncementEditing(sender:)), for: .touchUpInside)
         return announcementEditButton
+        
+    }()
+    
+    lazy private var announcementRevertChangesButton: BubbleButton = {
+        
+        let edgeInset: CGFloat = .getPercentageWidth(percentage: 2.5)
+        
+        var announcementRevertChangesButton = BubbleButton(bubbleButtonImage: UIImage.revertChangesArrowIcon.withTintColor(UIColor.white))
+        announcementRevertChangesButton.backgroundColor = .PrimaryCrimson
+        announcementRevertChangesButton.contentEdgeInsets = UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
+        announcementRevertChangesButton.alpha = 0.0
+        announcementRevertChangesButton.addTarget(self, action: #selector(revertEditingChanges(sender:)), for: .touchUpInside)
+        return announcementRevertChangesButton
         
     }()
     
@@ -151,7 +164,7 @@ final class AnnouncementsPageViewController: UIViewController {
     
     lazy private var announcementInfoStackView: UIStackView = {
         
-        var announcementInfoStackView = UIStackView(arrangedSubviews: [announcementTitleLabel, announcementTitleTextView, announcementBodyLabel, announcementBodyTextView])
+        var announcementInfoStackView = UIStackView(arrangedSubviews: [announcementTitleTextView, announcementBodyTextView])
         announcementInfoStackView.axis = .vertical
         announcementInfoStackView.alignment = .fill
         announcementInfoStackView.distribution = .fill
@@ -173,7 +186,7 @@ final class AnnouncementsPageViewController: UIViewController {
         announcementTitleTextView.isEditable = false
         announcementTitleTextView.delegate = self
         announcementTitleTextView.textColor = UIColor.black
-        announcementTitleTextView.backgroundColor = .clear
+        announcementTitleTextView.backgroundColor = .white
         return announcementTitleTextView
         
     }()
@@ -182,36 +195,9 @@ final class AnnouncementsPageViewController: UIViewController {
         
         var announcementBodyTextView = AttributedTextView()
         announcementBodyTextView.attributedText = currentAnnouncement.body
+        announcementBodyTextView.backgroundColor = .white
         announcementBodyTextView.delegate = self
         return announcementBodyTextView
-        
-    }()
-    
-    lazy private var announcementTitleLabel: UILabel = {
-        
-        var announcementTitleLabel = UILabel()
-        announcementTitleLabel.font = UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title3).pointSize)!)
-        announcementTitleLabel.text = "Announcement Title:"
-        announcementTitleLabel.textColor = .PrimaryCrimson
-        announcementTitleLabel.textAlignment = .left
-        announcementTitleLabel.numberOfLines = 0
-        announcementTitleLabel.isHidden = true
-        announcementTitleLabel.alpha = 0.0
-        return announcementTitleLabel
-        
-    }()
-    
-    lazy private var announcementBodyLabel: UILabel = {
-        
-        var announcementBodyLabel = UILabel()
-        announcementBodyLabel.font = UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title3).pointSize)!)
-        announcementBodyLabel.text = "Announcement Body:"
-        announcementBodyLabel.textColor = .PrimaryCrimson
-        announcementBodyLabel.textAlignment = .left
-        announcementBodyLabel.numberOfLines = 0
-        announcementBodyLabel.isHidden = true
-        announcementBodyLabel.alpha = 0.0
-        return announcementBodyLabel
         
     }()
     
@@ -287,6 +273,13 @@ final class AnnouncementsPageViewController: UIViewController {
         announcementEditButton.widthAnchor.constraint(equalTo: announcementCloseButton.widthAnchor).isActive = true
         announcementEditButton.heightAnchor.constraint(equalTo: announcementEditButton.widthAnchor).isActive = true
         
+        view.addSubview(announcementRevertChangesButton)
+        announcementRevertChangesButton.translatesAutoresizingMaskIntoConstraints = false
+        announcementRevertChangesButton.topAnchor.constraint(equalTo: announcementEditButton.bottomAnchor, constant: verticalEdgeInset).isActive = true
+        announcementRevertChangesButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: horizontalEdgeInset).isActive = true
+        announcementRevertChangesButton.widthAnchor.constraint(equalTo: announcementCloseButton.widthAnchor).isActive = true
+        announcementRevertChangesButton.heightAnchor.constraint(equalTo: announcementRevertChangesButton.widthAnchor).isActive = true
+        
         view.addSubview(announcementPublishButton)
         announcementPublishButton.translatesAutoresizingMaskIntoConstraints = false
         announcementPublishButton.topAnchor.constraint(equalTo: announcementEditButton.bottomAnchor, constant: verticalEdgeInset).isActive = true
@@ -304,7 +297,7 @@ final class AnnouncementsPageViewController: UIViewController {
         if(!isAdmin){
             announcementEditButton.isHidden = true
             //announcementCloseButton.isHidden = true
-            announcementPinButton.isHidden = true
+            //announcementPinButton.isHidden = true
             announcementPublishButton.isHidden = true
         }
     }
@@ -457,21 +450,14 @@ final class AnnouncementsPageViewController: UIViewController {
                            options: .curveEaseIn, animations: {
                             
                             self.announcementInfoStackView.spacing = self.announcementInfoStackView.spacing*2
-                            self.announcementTitleTextView.layer.cornerRadius = 8
-                            self.announcementTitleTextView.layer.borderColor = UIColor.PrimaryCrimson.cgColor
-                            self.announcementTitleTextView.layer.borderWidth = 2
-                            self.announcementBodyTextView.layer.cornerRadius = 8
-                            self.announcementBodyTextView.layer.borderColor = UIColor.PrimaryCrimson.cgColor
-                            self.announcementBodyTextView.layer.borderWidth = 2
-                            self.announcementTitleLabel.isHidden = false
-                            self.announcementBodyLabel.isHidden = false
-                            self.announcementTitleLabel.alpha = 1.0
-                            self.announcementBodyLabel.alpha = 1.0
+                            self.announcementTitleTextView.setBottomBorder(color: .PrimaryCrimson, width: .getWidthFitSize(minSize: 2.5, maxSize: 3.5))
+                            self.announcementBodyTextView.setBottomBorder(color: .PrimaryCrimson, width: .getWidthFitSize(minSize: 2.0, maxSize: 3.0))
                             self.announcementPublishButton.alpha = 0.0
                             self.announcementPublishButton.transform = CGAffineTransform.identity.scaledBy(x: 0.5, y: 0.5)
                             self.announcementDeleteButton.alpha = 1.0
                             self.announcementDeleteButton.transform = .identity
                             self.announcementImageView.innerEditingButton.alpha = 1.0
+                            self.announcementRevertChangesButton.alpha = 1.0
                             
             }, completion: { _ in
             
@@ -489,21 +475,18 @@ final class AnnouncementsPageViewController: UIViewController {
                            options: .curveEaseOut, animations: {
                             
                             self.announcementInfoStackView.spacing = self.announcementInfoStackView.spacing/2
-                            self.announcementTitleTextView.layer.cornerRadius = 0
-                            self.announcementTitleTextView.layer.borderWidth = 0
-                            self.announcementBodyTextView.layer.cornerRadius = 0
-                            self.announcementBodyTextView.layer.borderWidth = 0
-                            self.announcementTitleLabel.alpha = 0.0
-                            self.announcementBodyLabel.alpha = 0.0
-                            self.announcementTitleLabel.isHidden = true
-                            self.announcementBodyLabel.isHidden = true
+                            self.announcementTitleTextView.setBottomBorder(color: .PrimaryCrimson, width: 0.0)
+                            self.announcementBodyTextView.setBottomBorder(color: .PrimaryCrimson, width: 0.0)
                             self.announcementPublishButton.alpha = 1.0
                             self.announcementPublishButton.transform = CGAffineTransform.identity
                             self.announcementDeleteButton.alpha = 0.0
                             self.announcementDeleteButton.transform = CGAffineTransform.identity.scaledBy(x: 0.5, y: 0.5)
                             self.announcementImageView.innerEditingButton.alpha = 0.0
+                            self.announcementRevertChangesButton.alpha = 0.0
                             
             }, completion: { _ in
+                
+                self.announcementRevertChangesButton.transform = CGAffineTransform.identity
                 
                 var imageToReturn: UIImage?
                 var titleToReturn: String?
@@ -538,11 +521,23 @@ final class AnnouncementsPageViewController: UIViewController {
         
     }
     
+    @objc private func revertEditingChanges(sender: BubbleButton) {
+        
+        imageWasChanged = false
+        announcementImageView.innerImageView.image = currentAnnouncement.image
+        announcementTitleTextView.text = currentAnnouncement.title
+        announcementBodyTextView.attributedText = currentAnnouncement.body
+        announcementEditButton.toggle()
+        toggleAnnouncementEditingHelper()
+        
+    }
+    
     @objc private func toggleAnnouncementVisibility(sender: ToggleButton) {
         
         if announcementPublishButton.toggleState && announcementEditButton.toggleState {
             
             delegate?.toggleVisibility(forAnnouncementAt: announcementIndex)
+            announcementPublishButton.toggle()
             
         } else if announcementPublishButton.toggleState && !announcementEditButton.toggleState {
             
@@ -981,469 +976,6 @@ final class EditableImageView: UIView {
         innerEditingButton.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         innerEditingButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         innerEditingButton.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        
-    }
-    
-}
-
-final class AttributedTextView: UITextView {
-    
-    private var textIsUnderlined: Bool = false // For bug purposes.
-    private var indentRatio: Int = 0
-    
-    lazy private(set) var attributedTextBar: TextAtrributesBarView = {
-        
-        var attributedTextBar = TextAtrributesBarView(withHeight: nil)
-        attributedTextBar.boldTextButton.addTarget(self, action: #selector(boldText(sender:)), for: .touchUpInside)
-        attributedTextBar.italicTextButton.addTarget(self, action: #selector(italicText(sender:)), for: .touchUpInside)
-        attributedTextBar.underlineTextButton.addTarget(self, action: #selector(underlineText(sender:)), for: .touchUpInside)
-        attributedTextBar.strikeTextButton.addTarget(self, action: #selector(strikeText(sender:)), for: .touchUpInside)
-        attributedTextBar.highlightTextButton.addTarget(self, action: #selector(highlightText(sender:)), for: .touchUpInside)
-        attributedTextBar.alignTextLeftButton.addTarget(self, action: #selector(alignTextLeft(sender:)), for: .touchUpInside)
-        attributedTextBar.alignTextCenterButton.addTarget(self, action: #selector(alignTextCenter(sender:)), for: .touchUpInside)
-        attributedTextBar.alignTextRightButton.addTarget(self, action: #selector(alignTextRight(sender:)), for: .touchUpInside)
-        attributedTextBar.increaseIndentButton.addTarget(self, action: #selector(increaseIndentText(sender:)), for: .touchUpInside)
-        attributedTextBar.decreaseIndentButton.addTarget(self, action: #selector(decreaseIndentText(sender:)), for: .touchUpInside)
-        return attributedTextBar
-        
-    }()
-    
-    override init(frame: CGRect, textContainer: NSTextContainer?) {
-        
-        super.init(frame: frame, textContainer: textContainer)
-        
-        configureView()
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        
-        super.init(coder: coder)
-        
-        configureView()
-        
-    }
-    
-    private func configureView() {
-        
-        font = UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline).pointSize)!)
-        text = "Description Placeholder..."
-        textAlignment = .left
-        allowsEditingTextAttributes = true
-        sizeToFit()
-        isScrollEnabled = false
-        isEditable = false
-        dataDetectorTypes = [.link, .lookupSuggestion, .address, .calendarEvent, .phoneNumber]
-        textColor = UIColor.black
-        backgroundColor = .clear
-        inputAccessoryView = attributedTextBar
-        inputAccessoryView?.isHidden = true
-        linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.PrimaryCrimson,
-                              NSAttributedString.Key.underlineColor: UIColor.PrimaryCrimson,
-                              NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
-        
-    }
-    
-    fileprivate func toggleAttributedTextBar() {
-        
-        inputAccessoryView!.isHidden = !inputAccessoryView!.isHidden
-        
-    }
-    
-    @objc private func boldText(sender: ToggleButton) {
-        
-        toggleBoldface(self)
-        
-    }
-    
-    @objc private func italicText(sender: ToggleButton) {
-        
-        toggleItalics(self)
-        
-    }
-    
-    @objc private func underlineText(sender: ToggleButton) {
-        
-        toggleUnderline(self) // For bug purposes.
-        
-    }
-    
-    @objc private func strikeText(sender: ToggleButton) {
-        
-        if sender.toggleState {
-            
-            if selectedRange.length > 0 {
-                
-                textStorage.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: selectedRange)
-                
-            } else {
-            
-                typingAttributes[.strikethroughStyle] = NSUnderlineStyle.single.rawValue
-                
-            }
-            
-        } else {
-            
-            if selectedRange.length > 0 {
-                
-                textStorage.removeAttribute(.strikethroughStyle, range: selectedRange)
-                
-            } else {
-            
-                typingAttributes[.strikethroughStyle] = nil
-                
-            }
-            
-        }
-        
-    }
-    
-    @objc private func highlightText(sender: ToggleButton) {
-        
-        if sender.toggleState {
-            
-            if selectedRange.length > 0 {
-                
-                textStorage.addAttribute(.backgroundColor, value: UIColor.yellow, range: selectedRange)
-                
-            } else {
-            
-                typingAttributes[.backgroundColor] = UIColor.yellow
-                
-            }
-            
-        } else {
-            
-            if selectedRange.length > 0 {
-                
-                textStorage.removeAttribute(.backgroundColor, range: selectedRange)
-                
-            } else {
-            
-                typingAttributes[.backgroundColor] = nil
-                
-            }
-            
-        }
-        
-    }
-    
-    @objc private func alignTextLeft(sender: ToggleButton) {
-        
-        if sender.toggleState {
-            
-            if text == "" {
-                
-                textAlignment = .left
-                
-            } else {
-                
-                let leftParagraph = NSMutableParagraphStyle()
-                leftParagraph.alignment = .left
-                self.textStorage.addAttribute(.paragraphStyle, value: leftParagraph, range: selectedRange)
-                self.typingAttributes[.paragraphStyle] = leftParagraph
-            
-                text.enumerateSubstrings(in: text.startIndex..., options: .byParagraphs, { substring, range, _, stop in
-                    
-                    let paragraphRange = NSRange(range, in: self.text)
-                    
-                    if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location, paragraphRange) {
-                        
-                        let leftParagraph = NSMutableParagraphStyle()
-                        leftParagraph.alignment = .left
-                        self.textStorage.addAttribute(.paragraphStyle, value: leftParagraph, range: paragraphRange)
-                        
-                    } else if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location-1, paragraphRange) {
-                        
-                        let leftParagraph = NSMutableParagraphStyle()
-                        leftParagraph.alignment = .left
-                        self.textStorage.addAttribute(.paragraphStyle, value: leftParagraph, range: paragraphRange)
-                        
-                    } else if self.selectedRange.length > 0, NSIntersectionRange(paragraphRange, self.selectedRange).length > 0 {
-                        
-                        let leftParagraph = NSMutableParagraphStyle()
-                        leftParagraph.alignment = .left
-                        self.textStorage.addAttribute(.paragraphStyle, value: leftParagraph, range: paragraphRange)
-                        
-                    }
-                    
-                })
-                
-                
-            }
-            
-            if attributedTextBar.alignTextCenterButton.toggleState {
-                
-                attributedTextBar.alignTextCenterButton.toggle()
-                
-            }
-            
-            if attributedTextBar.alignTextRightButton.toggleState {
-                
-                attributedTextBar.alignTextRightButton.toggle()
-                
-            }
-            
-        } else {
-            
-            sender.toggle()
-            
-        }
-        
-    }
-    
-    @objc private func alignTextCenter(sender: ToggleButton) {
-        
-        if sender.toggleState {
-            
-            if text == "" {
-                
-                textAlignment = .center
-                
-            } else {
-                
-                let centerParagraph = NSMutableParagraphStyle()
-                centerParagraph.alignment = .center
-                self.textStorage.addAttribute(.paragraphStyle, value: centerParagraph, range: selectedRange)
-                self.typingAttributes[.paragraphStyle] = centerParagraph
-                
-                text.enumerateSubstrings(in: text.startIndex..., options: .byParagraphs, { substring, range, _, stop in
-                    
-                    let paragraphRange = NSRange(range, in: self.text)
-                    
-                    if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location, paragraphRange) {
-                        
-                        let centerParagraph = NSMutableParagraphStyle()
-                        centerParagraph.alignment = .center
-                        self.textStorage.addAttribute(.paragraphStyle, value: centerParagraph, range: paragraphRange)
-                        self.typingAttributes[.paragraphStyle] = centerParagraph
-                        
-                    } else if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location-1, paragraphRange) {
-                        
-                        let centerParagraph = NSMutableParagraphStyle()
-                        centerParagraph.alignment = .center
-                        self.textStorage.addAttribute(.paragraphStyle, value: centerParagraph, range: paragraphRange)
-                        self.typingAttributes[.paragraphStyle] = centerParagraph
-                        
-                    } else if self.selectedRange.length > 0, NSIntersectionRange(paragraphRange, self.selectedRange).length > 0 {
-                        
-                        let centerParagraph = NSMutableParagraphStyle()
-                        centerParagraph.alignment = .center
-                        self.textStorage.addAttribute(.paragraphStyle, value: centerParagraph, range: paragraphRange)
-                        self.typingAttributes[.paragraphStyle] = centerParagraph
-                        
-                    }
-                    
-                })
-                
-            }
-            
-            if attributedTextBar.alignTextLeftButton.toggleState {
-                
-                attributedTextBar.alignTextLeftButton.toggle()
-                
-            }
-            
-            if attributedTextBar.alignTextRightButton.toggleState {
-                
-                attributedTextBar.alignTextRightButton.toggle()
-                
-            }
-            
-        } else {
-            
-            sender.toggle()
-            
-        }
-        
-    }
-    
-    @objc private func alignTextRight(sender: ToggleButton) {
-        
-        if sender.toggleState {
-            
-            if text == "" {
-                
-                textAlignment = .right
-                
-            } else {
-                
-                let rightParagraph = NSMutableParagraphStyle()
-                rightParagraph.alignment = .right
-                self.textStorage.addAttribute(.paragraphStyle, value: rightParagraph, range: selectedRange)
-                self.typingAttributes[.paragraphStyle] = rightParagraph
-                
-                text.enumerateSubstrings(in: text.startIndex..., options: .byParagraphs, { substring, range, _, stop in
-                    
-                    let paragraphRange = NSRange(range, in: self.text)
-                    
-                    if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location, paragraphRange) {
-                        
-                        let rightParagraph = NSMutableParagraphStyle()
-                        rightParagraph.alignment = .right
-                        self.textStorage.addAttribute(.paragraphStyle, value: rightParagraph, range: paragraphRange)
-                        self.typingAttributes[.paragraphStyle] = rightParagraph
-                        
-                    } else if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location-1, paragraphRange) {
-                        
-                        let rightParagraph = NSMutableParagraphStyle()
-                        rightParagraph.alignment = .right
-                        self.textStorage.addAttribute(.paragraphStyle, value: rightParagraph, range: paragraphRange)
-                        self.typingAttributes[.paragraphStyle] = rightParagraph
-                        
-                    } else if self.selectedRange.length > 0, NSIntersectionRange(paragraphRange, self.selectedRange).length > 0 {
-                        
-                        let rightParagraph = NSMutableParagraphStyle()
-                        rightParagraph.alignment = .right
-                        self.textStorage.addAttribute(.paragraphStyle, value: rightParagraph, range: paragraphRange)
-                        self.typingAttributes[.paragraphStyle] = rightParagraph
-                        
-                    }
-                    
-                })
-                
-            }
-            
-            if attributedTextBar.alignTextLeftButton.toggleState {
-                
-                attributedTextBar.alignTextLeftButton.toggle()
-                
-            }
-            
-            if attributedTextBar.alignTextCenterButton.toggleState {
-                
-                attributedTextBar.alignTextCenterButton.toggle()
-                
-            }
-            
-        } else {
-            
-            sender.toggle()
-            
-        }
-        
-    }
-    
-    @objc func increaseIndentText(sender: BubbleButton) {
-        
-        if indentRatio >= 7 {
-            
-            indentRatio = 7
-            
-        } else {
-            
-            indentRatio+=1
-            
-        }
-        
-        applyIndent(indentRatio: indentRatio)
-        
-    }
-    
-    @objc func decreaseIndentText(sender: BubbleButton) {
-        
-        if indentRatio <= 0 {
-            
-            indentRatio = 0
-            
-        } else {
-            
-            indentRatio-=1
-            
-        }
-        
-        applyIndent(indentRatio: indentRatio)
-        
-    }
-    
-    private func applyIndent(indentRatio: Int) {
-        
-        if text == "" {
-            
-            let indentParagraph = NSMutableParagraphStyle()
-            indentParagraph.alignment = .left
-            indentParagraph.firstLineHeadIndent = CGFloat(indentRatio * 20)
-            indentParagraph.headIndent = CGFloat(indentRatio * 30)
-            self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: selectedRange)
-            self.typingAttributes[.paragraphStyle] = indentParagraph
-            
-        } else {
-            
-            let indentParagraph = NSMutableParagraphStyle()
-            indentParagraph.alignment = .left
-            indentParagraph.firstLineHeadIndent = CGFloat(indentRatio * 20)
-            indentParagraph.headIndent = CGFloat(indentRatio * 30)
-            self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: selectedRange)
-            self.typingAttributes[.paragraphStyle] = indentParagraph
-            
-            text.enumerateSubstrings(in: text.startIndex..., options: .byParagraphs, { substring, range, _, stop in
-                
-                let paragraphRange = NSRange(range, in: self.text)
-                
-                if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location, paragraphRange) {
-                    
-                    let indentParagraph = NSMutableParagraphStyle()
-                    indentParagraph.alignment = .left
-                    indentParagraph.firstLineHeadIndent = CGFloat(self.indentRatio * 20)
-                    indentParagraph.headIndent = CGFloat(self.indentRatio * 30)
-                    self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: paragraphRange)
-                    self.typingAttributes[.paragraphStyle] = indentParagraph
-                    
-                } else if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location-1, paragraphRange) {
-                    
-                    let indentParagraph = NSMutableParagraphStyle()
-                    indentParagraph.alignment = .left
-                    indentParagraph.firstLineHeadIndent = CGFloat(self.indentRatio * 20)
-                    indentParagraph.headIndent = CGFloat(self.indentRatio * 30)
-                    self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: paragraphRange)
-                    self.typingAttributes[.paragraphStyle] = indentParagraph
-                    
-                } else if self.selectedRange.length > 0, NSIntersectionRange(paragraphRange, self.selectedRange).length > 0 {
-                    
-                    let indentParagraph = NSMutableParagraphStyle()
-                    indentParagraph.alignment = .left
-                    indentParagraph.firstLineHeadIndent = CGFloat(self.indentRatio * 20)
-                    indentParagraph.headIndent = CGFloat(self.indentRatio * 30)
-                    self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: paragraphRange)
-                    self.typingAttributes[.paragraphStyle] = indentParagraph
-                    
-                }
-                
-            })
-            
-        }
-        
-    }
-    
-    override func toggleUnderline(_ sender: Any?) { // For bug purposes
-        
-        if textIsUnderlined {
-            
-            if selectedRange.length > 0 {
-                
-                textStorage.removeAttribute(.underlineStyle, range: selectedRange)
-                
-            } else {
-            
-                typingAttributes[.underlineStyle] = nil
-                
-            }
-            
-        } else {
-            
-            if selectedRange.length > 0 {
-                
-                textStorage.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: selectedRange)
-                
-            } else {
-            
-                typingAttributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
-                
-            }
-            
-        }
-        
-        textIsUnderlined = !textIsUnderlined
         
     }
     

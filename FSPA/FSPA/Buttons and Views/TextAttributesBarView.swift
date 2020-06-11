@@ -166,3 +166,473 @@ class TextAtrributesBarView: UIScrollView {
     }
     
 }
+
+final class AttributedTextView: UITextView {
+    
+    private var textIsUnderlined: Bool = false // For bug purposes.
+    private var highlightColor: UIColor = .yellow
+    private var indentRatio: Int = 0
+    
+    lazy private(set) var attributedTextBar: TextAtrributesBarView = {
+        
+        var attributedTextBar = TextAtrributesBarView(withHeight: nil)
+        attributedTextBar.boldTextButton.addTarget(self, action: #selector(boldText(sender:)), for: .touchUpInside)
+        attributedTextBar.italicTextButton.addTarget(self, action: #selector(italicText(sender:)), for: .touchUpInside)
+        attributedTextBar.underlineTextButton.addTarget(self, action: #selector(underlineText(sender:)), for: .touchUpInside)
+        attributedTextBar.strikeTextButton.addTarget(self, action: #selector(strikeText(sender:)), for: .touchUpInside)
+        attributedTextBar.highlightTextButton.addTarget(self, action: #selector(highlightText(sender:)), for: .touchUpInside)
+        attributedTextBar.alignTextLeftButton.addTarget(self, action: #selector(alignTextLeft(sender:)), for: .touchUpInside)
+        attributedTextBar.alignTextCenterButton.addTarget(self, action: #selector(alignTextCenter(sender:)), for: .touchUpInside)
+        attributedTextBar.alignTextRightButton.addTarget(self, action: #selector(alignTextRight(sender:)), for: .touchUpInside)
+        attributedTextBar.increaseIndentButton.addTarget(self, action: #selector(increaseIndentText(sender:)), for: .touchUpInside)
+        attributedTextBar.decreaseIndentButton.addTarget(self, action: #selector(decreaseIndentText(sender:)), for: .touchUpInside)
+        return attributedTextBar
+        
+    }()
+    
+    override init(frame: CGRect, textContainer: NSTextContainer?) {
+        
+        super.init(frame: frame, textContainer: textContainer)
+        
+        configureView()
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        
+        super.init(coder: coder)
+        
+        configureView()
+        
+    }
+    
+    private func configureView() {
+        
+        font = UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline).pointSize)!)
+        text = "Description Placeholder..."
+        textAlignment = .left
+        allowsEditingTextAttributes = true
+        sizeToFit()
+        isScrollEnabled = false
+        isEditable = false
+        dataDetectorTypes = [.link, .lookupSuggestion, .address, .calendarEvent, .phoneNumber]
+        textColor = UIColor.black
+        backgroundColor = .clear
+        inputAccessoryView = attributedTextBar
+        inputAccessoryView?.isHidden = true
+        linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.PrimaryCrimson,
+                              NSAttributedString.Key.underlineColor: UIColor.PrimaryCrimson,
+                              NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
+        
+    }
+    
+    func toggleAttributedTextBar() {
+        
+        inputAccessoryView!.isHidden = !inputAccessoryView!.isHidden
+        
+    }
+    
+    func setHighlightColor(color: UIColor) {
+        
+        highlightColor = color
+        
+    }
+    
+    @objc private func boldText(sender: ToggleButton) {
+        
+        toggleBoldface(self)
+        
+    }
+    
+    @objc private func italicText(sender: ToggleButton) {
+        
+        toggleItalics(self)
+        
+    }
+    
+    @objc private func underlineText(sender: ToggleButton) {
+        
+        toggleUnderline(self) // For bug purposes.
+        
+    }
+    
+    @objc private func strikeText(sender: ToggleButton) {
+        
+        if sender.toggleState {
+            
+            if selectedRange.length > 0 {
+                
+                textStorage.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: selectedRange)
+                
+            } else {
+            
+                typingAttributes[.strikethroughStyle] = NSUnderlineStyle.single.rawValue
+                
+            }
+            
+        } else {
+            
+            if selectedRange.length > 0 {
+                
+                textStorage.removeAttribute(.strikethroughStyle, range: selectedRange)
+                
+            } else {
+            
+                typingAttributes[.strikethroughStyle] = nil
+                
+            }
+            
+        }
+        
+    }
+    
+    @objc private func highlightText(sender: ToggleButton) {
+        
+        if sender.toggleState {
+            
+            if selectedRange.length > 0 {
+                
+                textStorage.addAttribute(.backgroundColor, value: highlightColor, range: selectedRange)
+                
+            } else {
+            
+                typingAttributes[.backgroundColor] = UIColor.yellow
+                
+            }
+            
+        } else {
+            
+            if selectedRange.length > 0 {
+                
+                textStorage.removeAttribute(.backgroundColor, range: selectedRange)
+                
+            } else {
+            
+                typingAttributes[.backgroundColor] = nil
+                
+            }
+            
+        }
+        
+    }
+    
+    @objc private func alignTextLeft(sender: ToggleButton) {
+        
+        if sender.toggleState {
+            
+            if text == "" {
+                
+                textAlignment = .left
+                
+            } else {
+                
+                let leftParagraph = NSMutableParagraphStyle()
+                leftParagraph.alignment = .left
+                self.textStorage.addAttribute(.paragraphStyle, value: leftParagraph, range: selectedRange)
+                self.typingAttributes[.paragraphStyle] = leftParagraph
+            
+                text.enumerateSubstrings(in: text.startIndex..., options: .byParagraphs, { substring, range, _, stop in
+                    
+                    let paragraphRange = NSRange(range, in: self.text)
+                    
+                    if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location, paragraphRange) {
+                        
+                        let leftParagraph = NSMutableParagraphStyle()
+                        leftParagraph.alignment = .left
+                        self.textStorage.addAttribute(.paragraphStyle, value: leftParagraph, range: paragraphRange)
+                        
+                    } else if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location-1, paragraphRange) {
+                        
+                        let leftParagraph = NSMutableParagraphStyle()
+                        leftParagraph.alignment = .left
+                        self.textStorage.addAttribute(.paragraphStyle, value: leftParagraph, range: paragraphRange)
+                        
+                    } else if self.selectedRange.length > 0, NSIntersectionRange(paragraphRange, self.selectedRange).length > 0 {
+                        
+                        let leftParagraph = NSMutableParagraphStyle()
+                        leftParagraph.alignment = .left
+                        self.textStorage.addAttribute(.paragraphStyle, value: leftParagraph, range: paragraphRange)
+                        
+                    }
+                    
+                })
+                
+                
+            }
+            
+            if attributedTextBar.alignTextCenterButton.toggleState {
+                
+                attributedTextBar.alignTextCenterButton.toggle()
+                
+            }
+            
+            if attributedTextBar.alignTextRightButton.toggleState {
+                
+                attributedTextBar.alignTextRightButton.toggle()
+                
+            }
+            
+        } else {
+            
+            sender.toggle()
+            
+        }
+        
+    }
+    
+    @objc private func alignTextCenter(sender: ToggleButton) {
+        
+        if sender.toggleState {
+            
+            if text == "" {
+                
+                textAlignment = .center
+                
+            } else {
+                
+                let centerParagraph = NSMutableParagraphStyle()
+                centerParagraph.alignment = .center
+                self.textStorage.addAttribute(.paragraphStyle, value: centerParagraph, range: selectedRange)
+                self.typingAttributes[.paragraphStyle] = centerParagraph
+                
+                text.enumerateSubstrings(in: text.startIndex..., options: .byParagraphs, { substring, range, _, stop in
+                    
+                    let paragraphRange = NSRange(range, in: self.text)
+                    
+                    if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location, paragraphRange) {
+                        
+                        let centerParagraph = NSMutableParagraphStyle()
+                        centerParagraph.alignment = .center
+                        self.textStorage.addAttribute(.paragraphStyle, value: centerParagraph, range: paragraphRange)
+                        self.typingAttributes[.paragraphStyle] = centerParagraph
+                        
+                    } else if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location-1, paragraphRange) {
+                        
+                        let centerParagraph = NSMutableParagraphStyle()
+                        centerParagraph.alignment = .center
+                        self.textStorage.addAttribute(.paragraphStyle, value: centerParagraph, range: paragraphRange)
+                        self.typingAttributes[.paragraphStyle] = centerParagraph
+                        
+                    } else if self.selectedRange.length > 0, NSIntersectionRange(paragraphRange, self.selectedRange).length > 0 {
+                        
+                        let centerParagraph = NSMutableParagraphStyle()
+                        centerParagraph.alignment = .center
+                        self.textStorage.addAttribute(.paragraphStyle, value: centerParagraph, range: paragraphRange)
+                        self.typingAttributes[.paragraphStyle] = centerParagraph
+                        
+                    }
+                    
+                })
+                
+            }
+            
+            if attributedTextBar.alignTextLeftButton.toggleState {
+                
+                attributedTextBar.alignTextLeftButton.toggle()
+                
+            }
+            
+            if attributedTextBar.alignTextRightButton.toggleState {
+                
+                attributedTextBar.alignTextRightButton.toggle()
+                
+            }
+            
+        } else {
+            
+            sender.toggle()
+            
+        }
+        
+    }
+    
+    @objc private func alignTextRight(sender: ToggleButton) {
+        
+        if sender.toggleState {
+            
+            if text == "" {
+                
+                textAlignment = .right
+                
+            } else {
+                
+                let rightParagraph = NSMutableParagraphStyle()
+                rightParagraph.alignment = .right
+                self.textStorage.addAttribute(.paragraphStyle, value: rightParagraph, range: selectedRange)
+                self.typingAttributes[.paragraphStyle] = rightParagraph
+                
+                text.enumerateSubstrings(in: text.startIndex..., options: .byParagraphs, { substring, range, _, stop in
+                    
+                    let paragraphRange = NSRange(range, in: self.text)
+                    
+                    if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location, paragraphRange) {
+                        
+                        let rightParagraph = NSMutableParagraphStyle()
+                        rightParagraph.alignment = .right
+                        self.textStorage.addAttribute(.paragraphStyle, value: rightParagraph, range: paragraphRange)
+                        self.typingAttributes[.paragraphStyle] = rightParagraph
+                        
+                    } else if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location-1, paragraphRange) {
+                        
+                        let rightParagraph = NSMutableParagraphStyle()
+                        rightParagraph.alignment = .right
+                        self.textStorage.addAttribute(.paragraphStyle, value: rightParagraph, range: paragraphRange)
+                        self.typingAttributes[.paragraphStyle] = rightParagraph
+                        
+                    } else if self.selectedRange.length > 0, NSIntersectionRange(paragraphRange, self.selectedRange).length > 0 {
+                        
+                        let rightParagraph = NSMutableParagraphStyle()
+                        rightParagraph.alignment = .right
+                        self.textStorage.addAttribute(.paragraphStyle, value: rightParagraph, range: paragraphRange)
+                        self.typingAttributes[.paragraphStyle] = rightParagraph
+                        
+                    }
+                    
+                })
+                
+            }
+            
+            if attributedTextBar.alignTextLeftButton.toggleState {
+                
+                attributedTextBar.alignTextLeftButton.toggle()
+                
+            }
+            
+            if attributedTextBar.alignTextCenterButton.toggleState {
+                
+                attributedTextBar.alignTextCenterButton.toggle()
+                
+            }
+            
+        } else {
+            
+            sender.toggle()
+            
+        }
+        
+    }
+    
+    @objc func increaseIndentText(sender: BubbleButton) {
+        
+        if indentRatio >= 7 {
+            
+            indentRatio = 7
+            
+        } else {
+            
+            indentRatio+=1
+            
+        }
+        
+        applyIndent(indentRatio: indentRatio)
+        
+    }
+    
+    @objc func decreaseIndentText(sender: BubbleButton) {
+        
+        if indentRatio <= 0 {
+            
+            indentRatio = 0
+            
+        } else {
+            
+            indentRatio-=1
+            
+        }
+        
+        applyIndent(indentRatio: indentRatio)
+        
+    }
+    
+    private func applyIndent(indentRatio: Int) {
+        
+        if text == "" {
+            
+            let indentParagraph = NSMutableParagraphStyle()
+            indentParagraph.alignment = .left
+            indentParagraph.firstLineHeadIndent = CGFloat(indentRatio * 20)
+            indentParagraph.headIndent = CGFloat(indentRatio * 30)
+            self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: selectedRange)
+            self.typingAttributes[.paragraphStyle] = indentParagraph
+            
+        } else {
+            
+            let indentParagraph = NSMutableParagraphStyle()
+            indentParagraph.alignment = .left
+            indentParagraph.firstLineHeadIndent = CGFloat(indentRatio * 20)
+            indentParagraph.headIndent = CGFloat(indentRatio * 30)
+            self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: selectedRange)
+            self.typingAttributes[.paragraphStyle] = indentParagraph
+            
+            text.enumerateSubstrings(in: text.startIndex..., options: .byParagraphs, { substring, range, _, stop in
+                
+                let paragraphRange = NSRange(range, in: self.text)
+                
+                if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location, paragraphRange) {
+                    
+                    let indentParagraph = NSMutableParagraphStyle()
+                    indentParagraph.alignment = .left
+                    indentParagraph.firstLineHeadIndent = CGFloat(self.indentRatio * 20)
+                    indentParagraph.headIndent = CGFloat(self.indentRatio * 30)
+                    self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: paragraphRange)
+                    self.typingAttributes[.paragraphStyle] = indentParagraph
+                    
+                } else if self.selectedRange.length == 0, NSLocationInRange(self.selectedRange.location-1, paragraphRange) {
+                    
+                    let indentParagraph = NSMutableParagraphStyle()
+                    indentParagraph.alignment = .left
+                    indentParagraph.firstLineHeadIndent = CGFloat(self.indentRatio * 20)
+                    indentParagraph.headIndent = CGFloat(self.indentRatio * 30)
+                    self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: paragraphRange)
+                    self.typingAttributes[.paragraphStyle] = indentParagraph
+                    
+                } else if self.selectedRange.length > 0, NSIntersectionRange(paragraphRange, self.selectedRange).length > 0 {
+                    
+                    let indentParagraph = NSMutableParagraphStyle()
+                    indentParagraph.alignment = .left
+                    indentParagraph.firstLineHeadIndent = CGFloat(self.indentRatio * 20)
+                    indentParagraph.headIndent = CGFloat(self.indentRatio * 30)
+                    self.textStorage.addAttribute(.paragraphStyle, value: indentParagraph, range: paragraphRange)
+                    self.typingAttributes[.paragraphStyle] = indentParagraph
+                    
+                }
+                
+            })
+            
+        }
+        
+    }
+    
+    override func toggleUnderline(_ sender: Any?) { // For bug purposes
+        
+        if textIsUnderlined {
+            
+            if selectedRange.length > 0 {
+                
+                textStorage.removeAttribute(.underlineStyle, range: selectedRange)
+                
+            } else {
+            
+                typingAttributes[.underlineStyle] = nil
+                
+            }
+            
+        } else {
+            
+            if selectedRange.length > 0 {
+                
+                textStorage.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: selectedRange)
+                
+            } else {
+            
+                typingAttributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
+                
+            }
+            
+        }
+        
+        textIsUnderlined = !textIsUnderlined
+        
+    }
+    
+}

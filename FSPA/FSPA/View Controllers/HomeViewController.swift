@@ -20,6 +20,14 @@ protocol AnnouncementsPageViewControllerDelegate: class {
     
 }
 
+protocol ToDosPageViewControllerDelegate: class {
+    
+    func toggleVisibility(forToDoAt index: Int)
+    func editToDo(forToDoAt index: Int, newTitle: String?, newDeadline: Date?, newDetails: NSAttributedString?)
+    func deleteToDo(forToDoAt index: Int)
+    
+}
+
 final class HomeViewController: UIViewController {
     
     lazy private(set) var topView: UIView = {
@@ -139,7 +147,8 @@ final class HomeViewController: UIViewController {
     private var announcementList: [Announcement] = []
     private var pinAnnouncementIndexList: [Int] = []
     private var nonPinAnnouncementIndexList: [Int] = []
-    private var toDoList: [String] = ["Example 1", "Very long toDo title to showcase functionality", "Completed toDo"]
+    private var toDoList: [ToDo] = [ToDo(title: "Example To-Do", details: NSAttributedString(string: "This is an example of a to-do.", attributes: [NSAttributedString.Key.font : UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .callout).pointSize)!)]), deadline: Date(), usersLeftToComplete: ["Abdul Ayad", "Manuel A Martin Callejo"], usersThatCompleted: ["Max Petersen"], isPublic: false)]
+    private var toDoConfiguration: [Int] = [0]
     
     lazy private(set) var edgeFadeView: UIView = UIView()
     private var currentWorkspace = ""
@@ -329,10 +338,14 @@ final class HomeViewController: UIViewController {
                 }
                 
                 ref.child("users/\(uid)/workspaces/\(self.currentWorkspace)").observeSingleEvent(of: .value, with: { (snapshot) in
+                    
                     let value = snapshot.value as! [String: Any]
                     
                     self.isAdmin = value["isAdmin"] as! Bool
                     if(self.isAdmin){
+                        
+                        self.addCellButton.isHidden = false
+                        
                         ref.child("workspaces/\(self.currentWorkspace)/announcements").observeSingleEvent(of: .value, with: { (snapshot) in
                             if snapshot.childrenCount > 0 {
                                 for data in snapshot.children.allObjects as! [DataSnapshot] {
@@ -351,10 +364,6 @@ final class HomeViewController: UIViewController {
                                         
                                         
                                         self.announcementList.append(announcementToAdd)
-                                        
-                                        
-                                        
-                                        
                                         
                                     }
                                 }
@@ -388,6 +397,9 @@ final class HomeViewController: UIViewController {
                         })
                         // self.editButton.isHidden = false
                     }else{
+                        
+                        self.addCellButton.isHidden = true
+                        
                         ref.child("workspaces/\(self.currentWorkspace)/announcements").observeSingleEvent(of: .value, with: { (snapshot) in
                             if snapshot.childrenCount > 0 {
                                 for data in snapshot.children.allObjects as! [DataSnapshot] {
@@ -598,7 +610,14 @@ final class HomeViewController: UIViewController {
                     
                 }
                 
-            case .ToDo: print("ERROR: Trying to add a cell to a toDo collectionView.")
+            case .ToDo:
+                
+                toDoList.append(ToDo())
+                toDoConfiguration.insert(toDoList.count-1, at: 0)
+                tabNavigationCell.cellCollectionView.reloadData()
+                tabNavigationCell.cellCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .centeredVertically)
+                collectionView(tabNavigationCell.cellCollectionView, didSelectItemAt: IndexPath(row: 0, section: 0))
+                
             case .Members: print("ERROR: Trying to add a cell to a members collectionView.")
             case .Default: print("ERROR: Trying to add a cell to a default collectionView.")
                 
@@ -728,7 +747,32 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                 
                 return announcementList.count
                 
-            case .ToDo: return toDoList.count
+            case .ToDo:
+                
+                if toDoList.count == 0 {
+                    
+                    let placeholderImageView = UIImageView(image: UIImage.toDosCollectionViewPlaceholder.withTintColor(UIColor.lightGray))
+                    placeholderImageView.contentMode = .scaleAspectFit
+                    
+                    placeholderImageView.translatesAutoresizingMaskIntoConstraints = false
+                    placeholderImageView.heightAnchor.constraint(equalToConstant: .getPercentageWidth(percentage: 70)).isActive = true
+                    placeholderImageView.widthAnchor.constraint(equalTo: placeholderImageView.heightAnchor).isActive = true
+                    
+                    let placeholderView = UIView()
+                    placeholderView.addSubview(placeholderImageView)
+                    placeholderImageView.centerYAnchor.constraint(equalTo: placeholderView.centerYAnchor).isActive = true
+                    placeholderImageView.centerXAnchor.constraint(equalTo: placeholderView.centerXAnchor).isActive = true
+                    
+                    collectionView.backgroundView = placeholderView
+                    
+                } else {
+                    
+                    collectionView.backgroundView = nil
+                    
+                }
+                
+                return toDoList.count
+                
             case .Members: return 3
             case .Default: return 1
                 
@@ -844,11 +888,14 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                 
                 if let toDoCell = collectionView.dequeueReusableCell(withReuseIdentifier: collectionView.tabCellID, for: indexPath) as? ToDoCell {
                     
-                    if indexPath.item % 2 == 0 {
+                    let index = toDoConfiguration[indexPath.item]
+                    
+                    toDoCell.toDoTitleLabel.text = toDoList[index].title
+                    toDoCell.setToDoDeadline(deadline: toDoList[index].deadline)
+                    
+                    if toDoList[index].usersLeftToComplete.count == 0 && toDoList[index].usersThatCompleted.count != 0 {
                         
-                        toDoCell.toDoLabel.text = toDoList[indexPath.item]
-                        toDoCell.toDoDeadlineLabel.text = "May 25, 2020"
-                        toDoCell.toggleToDo(isCompleted: true)
+                        toDoCell.toDoCheckBoxButton.toggleCheck()
                         
                     }
                     
@@ -908,23 +955,40 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        if let tabCollectionView = collectionView as? TabCollectionView, tabCollectionView.section == .Announcements {
+        if let tabCollectionView = collectionView as? TabCollectionView {
             
-            if indexPath.item < pinAnnouncementIndexList.count {
+            switch tabCollectionView.section {
                 
-                let index = pinAnnouncementIndexList[indexPath.item]
+            case .Announcements:
                 
-                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index, admin: isAdmin)
-                announcementsPageVC.delegate = self
-                navigationController?.pushViewController(announcementsPageVC, animated: true)
+                if indexPath.item < pinAnnouncementIndexList.count {
+                    
+                    let index = pinAnnouncementIndexList[indexPath.item]
+                    
+                    let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index, admin: isAdmin)
+                    announcementsPageVC.delegate = self
+                    navigationController?.pushViewController(announcementsPageVC, animated: true)
+                    
+                } else {
+                    
+                    let index = nonPinAnnouncementIndexList[indexPath.item-pinAnnouncementIndexList.count]
+                    
+                    let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index, admin: isAdmin)
+                    announcementsPageVC.delegate = self
+                    navigationController?.pushViewController(announcementsPageVC, animated: true)
+                    
+                }
+ 
+            case .ToDo:
                 
-            } else {
+                let index = toDoConfiguration[indexPath.item]
                 
-                let index = nonPinAnnouncementIndexList[indexPath.item-pinAnnouncementIndexList.count]
+                let toDosPageVC = ToDosPageViewController(toDo: toDoList[index], index: index)
+                toDosPageVC.delegate = self
+                navigationController?.pushViewController(toDosPageVC, animated: true)
                 
-                let announcementsPageVC = AnnouncementsPageViewController(announcement: announcementList[index], index: index, admin: isAdmin)
-                announcementsPageVC.delegate = self
-                navigationController?.pushViewController(announcementsPageVC, animated: true)
+            case .Members: print("SELECTED A MEMBERS CELL")
+            case .Default: print("SELECTED A DEFAULT CELL")
                 
             }
             
@@ -985,8 +1049,8 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         
         if collectionView is TabCollectionView {
             
-            let item = toDoList[indexPath.row]
-            let itemProvider = NSItemProvider(object: item as NSString)
+            let item = toDoConfiguration[indexPath.item]
+            let itemProvider = NSItemProvider(object: String(item) as NSString)
             let dragItem = UIDragItem(itemProvider: itemProvider)
             dragItem.localObject = item
             return [dragItem]
@@ -1034,8 +1098,8 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                     
                     collectionView.performBatchUpdates({
                         
-                        self.toDoList.remove(at: sourceIndexPath.item)
-                        self.toDoList.insert(item.dragItem.localObject as! String, at: destinationIndexPath.item)
+                        self.toDoConfiguration.remove(at: sourceIndexPath.item)
+                        self.toDoConfiguration.insert(item.dragItem.localObject as! Int, at: destinationIndexPath.item)
                         
                         collectionView.deleteItems(at: [sourceIndexPath])
                         collectionView.insertItems(at: [destinationIndexPath])
@@ -1143,6 +1207,8 @@ extension HomeViewController: AnnouncementsPageViewControllerDelegate {
     
     func deleteAnnouncement(forAnnouncementAt index: Int) {
         
+        print("DELETING ANNOUNCEMENT")
+        
         if index == -1 {
             
             print("ERROR: Unable to perform action. Returned index is out of bounds (-1).")
@@ -1161,6 +1227,108 @@ extension HomeViewController: AnnouncementsPageViewControllerDelegate {
         } else {
             
             print("ERROR: Unable to refresh announcements. The announcements CollectionView is out of reach.")
+            
+        }
+        
+    }
+    
+}
+
+extension HomeViewController: ToDosPageViewControllerDelegate {
+    
+    func toggleVisibility(forToDoAt index: Int) {
+        
+        print("TOGGLING VISIBILITY")
+        
+        if index == -1 {
+            
+            print("ERROR: Unable to perform action. Returned index is out of bounds (-1).")
+            return
+            
+        }
+        
+        toDoList[index].isPublic = !toDoList[index].isPublic
+        
+        if tabNavigationCollectionView.visibleCells.count == 1,
+            let tabNavigationCell = tabNavigationCollectionView.visibleCells.first as? tabNavigationCell, tabNavigationCell.cellCollectionView.section == .ToDo {
+            
+            tabNavigationCell.cellCollectionView.reloadData()
+            
+        } else {
+            
+            print("ERROR: Unable to refresh to-dos. The to-do CollectionView is out of reach.")
+            
+        }
+        
+    }
+    
+    func editToDo(forToDoAt index: Int, newTitle: String?, newDeadline: Date?, newDetails: NSAttributedString?) {
+        
+        print("EDITING TO-DO")
+        
+        if index == -1 {
+            
+            print("ERROR: Unable to perform action. Returned index is out of bounds (-1).")
+            return
+            
+        }
+        
+        var needsToReload = false
+        
+        if newTitle != nil || newDetails != nil {
+            
+            if let newTitle = newTitle { self.toDoList[index].title = newTitle }
+            if let newDetails = newDetails { self.toDoList[index].details = newDetails }
+            needsToReload = true
+            
+        }
+        
+        if newDeadline != nil || (newDeadline == nil && toDoList[index].deadline != nil) {
+            
+            self.toDoList[index].deadline = newDeadline
+            needsToReload = true
+            
+        }
+        
+        if needsToReload {
+            
+            if tabNavigationCollectionView.visibleCells.count == 1,
+                let tabNavigationCell = tabNavigationCollectionView.visibleCells.first as? tabNavigationCell, tabNavigationCell.cellCollectionView.section == .ToDo {
+                
+                tabNavigationCell.cellCollectionView.reloadData()
+                
+            } else {
+                
+                print("ERROR: Unable to refresh to-dos. The to-do CollectionView is out of reach.")
+                
+            }
+            
+        }
+        
+    }
+    
+    func deleteToDo(forToDoAt index: Int) {
+        
+        print("DELETING TO-DO")
+        
+        if index == -1 {
+            
+            print("ERROR: Unable to perform action. Returned index is out of bounds (-1).")
+            return
+            
+        }
+        
+        toDoList.remove(at: index)
+        toDoConfiguration.remove(at: index)
+        
+        if tabNavigationCollectionView.visibleCells.count == 1,
+            let tabNavigationCell = tabNavigationCollectionView.visibleCells.first as? tabNavigationCell, tabNavigationCell.cellCollectionView.section == .ToDo {
+            
+            tabNavigationCell.cellCollectionView.reloadData()
+            
+        } else {
+            
+            print("ERROR: Unable to refresh to-dos. The to-do CollectionView is out of reach.")
             
         }
         

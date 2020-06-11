@@ -57,7 +57,11 @@ extension UIImage {
     static let increaseIndentIcon: UIImage = UIImage(named: "increaseIndentIcon")!
     static let decreaseIndentIcon: UIImage = UIImage(named: "decreaseIndentIcon")!
     static let announcementsCollectionViewPlaceholder: UIImage = UIImage(named: "announcementsCollectionViewPlaceholder")!
+    static let toDosCollectionViewPlaceholder: UIImage = UIImage(named: "toDosCollectionViewPlaceholder")!
+    static let membersCollectionViewPlaceholder: UIImage = UIImage(named: "membersCollectionViewPlaceholder")!
     static let addPlusIcon: UIImage = UIImage(named: "addPlusIcon")!
+    static let floppyDiskSaveIcon: UIImage = UIImage(named: "floppyDiskSaveIcon")!
+    static let revertChangesArrowIcon: UIImage = UIImage(named: "revertChangesArrowIcon")!
     
 }
 
@@ -91,6 +95,20 @@ extension UIView {
     final func getCornerRadiusFit(percentage: CGFloat) -> CGFloat {
         
         return (CGFloat(abs(percentage))/100)*0.5*min(frame.height, frame.width)
+        
+    }
+    
+}
+
+extension UITextView {
+    
+    final func setBottomBorder(color: UIColor, width: CGFloat) {
+        
+        self.layer.masksToBounds = false
+        self.layer.shadowColor = color.cgColor
+        self.layer.shadowOffset = CGSize(width: 0.0, height: width)
+        self.layer.shadowOpacity = 1.0
+        self.layer.shadowRadius = 0.0
         
     }
     

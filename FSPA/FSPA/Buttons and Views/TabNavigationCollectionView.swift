@@ -135,6 +135,35 @@ final class AnnouncementsCell: UICollectionViewCell {
     let horizontalEdgeInset: CGFloat = .getPercentageWidth(percentage: 5)
     let verticalEdgeInset: CGFloat = .getPercentageWidth(percentage: 4)
     
+    lazy private(set) var newAnnouncementsNotificationView: UIView = {
+        
+        let newLabel = UILabel()
+        newLabel.text = "· NEW ·"
+        newLabel.textAlignment = .center
+        newLabel.numberOfLines = 1
+        newLabel.textColor = .white
+        newLabel.font = UIFont(name: "HelveticaNeue-Bold", size: verticalEdgeInset*1.2)
+        
+        var newAnnouncementsNotificationView = UIView()
+        newAnnouncementsNotificationView.addShadowAndRoundCorners(shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 1.0))
+        newAnnouncementsNotificationView.backgroundColor = .PrimaryCrimson
+        
+        newAnnouncementsNotificationView.translatesAutoresizingMaskIntoConstraints = false
+        newAnnouncementsNotificationView.widthAnchor.constraint(equalToConstant: newLabel.intrinsicContentSize.width + (horizontalEdgeInset*0.8)).isActive = true
+        
+        newAnnouncementsNotificationView.addSubview(newLabel)
+        newLabel.translatesAutoresizingMaskIntoConstraints = false
+        newLabel.topAnchor.constraint(equalTo: newAnnouncementsNotificationView.topAnchor, constant: verticalEdgeInset*0.33).isActive = true
+        newLabel.bottomAnchor.constraint(equalTo: newAnnouncementsNotificationView.bottomAnchor, constant: -verticalEdgeInset*0.33).isActive = true
+        newLabel.leadingAnchor.constraint(equalTo: newAnnouncementsNotificationView.leadingAnchor, constant: horizontalEdgeInset*0.4).isActive = true
+        newLabel.trailingAnchor.constraint(equalTo: newAnnouncementsNotificationView.trailingAnchor, constant: -horizontalEdgeInset*0.4).isActive = true
+        
+        newAnnouncementsNotificationView.alpha = 0.0
+        
+        return newAnnouncementsNotificationView
+        
+    }()
+    
     lazy private(set) var announcementsImageView: UIImageView = {
         
         var announcementImageView = UIImageView()
@@ -253,6 +282,12 @@ final class AnnouncementsCell: UICollectionViewCell {
         announcementsVisibilityButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -horizontalEdgeInset).isActive = true
         announcementsVisibilityButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1).isActive = true
         announcementsVisibilityButton.heightAnchor.constraint(equalTo: announcementsVisibilityButton.widthAnchor).isActive = true
+        
+        contentView.addSubview(newAnnouncementsNotificationView)
+        newAnnouncementsNotificationView.translatesAutoresizingMaskIntoConstraints = false
+        newAnnouncementsNotificationView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        newAnnouncementsNotificationView.centerYAnchor.constraint(equalTo: announcementsPinButton.centerYAnchor).isActive = true
+        newAnnouncementsNotificationView.heightAnchor.constraint(equalTo: announcementsPinButton.heightAnchor, multiplier: 0.77).isActive = true
        
     }
     
@@ -272,89 +307,36 @@ final class ToDoCell: UICollectionViewCell {
     let horizontalEdgeInset: CGFloat = .getPercentageWidth(percentage: 5)
     let verticalEdgeInset: CGFloat = .getPercentageWidth(percentage: 3)
     
-    lazy private(set) var toDoLabel: UILabel = {
+    lazy private(set) var toDoTitleLabel: UILabel = {
         
-        var toDoLabel = UILabel()
-        toDoLabel.text = "To-Do Title Placeholder"
-        toDoLabel.textAlignment = .left
-        toDoLabel.numberOfLines = 2
-        toDoLabel.textColor = UIColor.BgGray
-        toDoLabel.font = UIFont(name: "HelveticaNeue-Bold", size: .getWidthFitSize(minSize: 16.0, maxSize: 20.0))
-        return toDoLabel
+        var toDoTitleLabel = UILabel()
+        toDoTitleLabel.text = "To-Do Title Placeholder"
+        toDoTitleLabel.textAlignment = .left
+        toDoTitleLabel.numberOfLines = 1
+        toDoTitleLabel.textColor = UIColor.BgGray
+        toDoTitleLabel.font = UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue-Bold", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline).pointSize)!)
+        return toDoTitleLabel
         
     }()
     
     lazy private(set) var toDoDeadlineLabel: UILabel = {
         
-        var toDoDealineLabel = UILabel()
-        toDoDealineLabel.text = "Deadline: -"
-        toDoDealineLabel.textAlignment = .left
-        toDoDealineLabel.numberOfLines = 1
-        toDoDealineLabel.textColor = UIColor.AnalGold
-        toDoDealineLabel.font = UIFont(name: "HelveticaNeue-MediumItalic", size: .getWidthFitSize(minSize: 13.0, maxSize: 17.0))
-        return toDoDealineLabel
+        var toDoDeadlineLabel = UILabel()
+        toDoDeadlineLabel.text = "No Deadline"
+        toDoDeadlineLabel.textAlignment = .left
+        toDoDeadlineLabel.numberOfLines = 1
+        toDoDeadlineLabel.textColor = UIColor.AnalGold
+        toDoDeadlineLabel.font = UIFontMetrics.default.scaledFont(for: UIFont(name: "HelveticaNeue-MediumItalic", size: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize)!)
+        return toDoDeadlineLabel
         
     }()
     
-    lazy private(set) var toDoCheckBoxImageView: UIImageView = {
+    lazy private(set) var toDoCheckBoxButton: CheckBoxButton = {
         
-        var toDoCheckBoxImageView = UIImageView()
-        toDoCheckBoxImageView.image = UIImage.checkMarkIcon.withTintColor(UIColor.PrimaryCrimson)
-        toDoCheckBoxImageView.alpha = 0.0
-        toDoCheckBoxImageView.contentMode = .scaleAspectFill
-        toDoCheckBoxImageView.clipsToBounds = true
-        return toDoCheckBoxImageView
+        var toDoCheckBoxButton = CheckBoxButton(checkMarkColor: UIColor.PrimaryCrimson)
+        return toDoCheckBoxButton
         
     }()
-    
-    lazy private(set) var toDoCheckBoxView: UIView = {
-        
-        var toDoCheckBoxView = UIView()
-        toDoCheckBoxView.backgroundColor = UIColor.BgGray
-        toDoCheckBoxView.addShadowAndRoundCorners(cornerRadius: .getWidthFitSize(minSize: 6.0, maxSize: 8.0))
-        
-        toDoCheckBoxView.addSubview(toDoCheckBoxImageView)
-        toDoCheckBoxImageView.translatesAutoresizingMaskIntoConstraints = false
-        toDoCheckBoxImageView.topAnchor.constraint(equalTo: toDoCheckBoxView.topAnchor, constant: .getPercentageWidth(percentage: 1)).isActive = true
-        toDoCheckBoxImageView.bottomAnchor.constraint(equalTo: toDoCheckBoxView.bottomAnchor, constant: -.getPercentageWidth(percentage: 1)).isActive = true
-        toDoCheckBoxImageView.leadingAnchor.constraint(equalTo: toDoCheckBoxView.leadingAnchor, constant: .getPercentageWidth(percentage: 1)).isActive = true
-        toDoCheckBoxImageView.trailingAnchor.constraint(equalTo: toDoCheckBoxView.trailingAnchor, constant: -.getPercentageWidth(percentage: 1)).isActive = true
-        
-        return toDoCheckBoxView
-        
-    }()
-    
-    private(set) var toDoIsCompleted = false {
-        
-        willSet (newState) {
-            
-            if toDoIsCompleted != newState {
-                
-                if newState { // toDo is now completed:
-                    
-                    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.55, initialSpringVelocity: 3,
-                                   options: .curveEaseOut, animations: {
-                    
-                                    self.toDoCheckBoxImageView.alpha = 1.0
-                                    
-                    })
-                    
-                } else { // toDo is not completed yet:
-            
-                    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.55, initialSpringVelocity: 3,
-                                   options: .curveEaseOut, animations: {
-                                    
-                                    self.toDoCheckBoxImageView.alpha = 0.0
-                                    
-                    })
-                    
-                }
-                
-            }
-            
-        }
-        
-    }
     
     override init(frame: CGRect) {
         
@@ -375,37 +357,42 @@ final class ToDoCell: UICollectionViewCell {
         contentView.addShadowAndRoundCorners(shadowOffset: CGSize(width: 0.0, height: 0.0), shadowOpacity: 0.2, shadowRadius: 8.0)
         contentView.backgroundColor = .PrimaryCrimson
         
-        contentView.addSubview(toDoCheckBoxView)
-        toDoCheckBoxView.translatesAutoresizingMaskIntoConstraints = false
-        toDoCheckBoxView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        toDoCheckBoxView.widthAnchor.constraint(equalToConstant: toDoLabel.font.pointSize*1.6).isActive = true
-        toDoCheckBoxView.heightAnchor.constraint(equalTo: toDoCheckBoxView.widthAnchor, multiplier: 1).isActive = true
-        toDoCheckBoxView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -horizontalEdgeInset).isActive = true
+        contentView.addSubview(toDoCheckBoxButton)
+        toDoCheckBoxButton.translatesAutoresizingMaskIntoConstraints = false
+        toDoCheckBoxButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        toDoCheckBoxButton.widthAnchor.constraint(equalToConstant: toDoTitleLabel.font.pointSize*1.6).isActive = true
+        toDoCheckBoxButton.heightAnchor.constraint(equalTo: toDoCheckBoxButton.widthAnchor, multiplier: 1).isActive = true
+        toDoCheckBoxButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -horizontalEdgeInset).isActive = true
         
-        contentView.addSubview(toDoLabel)
-        toDoLabel.translatesAutoresizingMaskIntoConstraints = false
-        toDoLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: horizontalEdgeInset).isActive = true
-        toDoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: horizontalEdgeInset).isActive = true
-        toDoLabel.trailingAnchor.constraint(equalTo: toDoCheckBoxView.leadingAnchor, constant: -horizontalEdgeInset).isActive = true
+        contentView.addSubview(toDoTitleLabel)
+        toDoTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        toDoTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: horizontalEdgeInset).isActive = true
+        toDoTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: horizontalEdgeInset).isActive = true
+        toDoTitleLabel.trailingAnchor.constraint(equalTo: toDoCheckBoxButton.leadingAnchor, constant: -horizontalEdgeInset).isActive = true
         
         contentView.addSubview(toDoDeadlineLabel)
         toDoDeadlineLabel.translatesAutoresizingMaskIntoConstraints = false
-        toDoDeadlineLabel.topAnchor.constraint(equalTo: toDoLabel.bottomAnchor, constant: verticalEdgeInset).isActive = true
+        toDoDeadlineLabel.topAnchor.constraint(equalTo: toDoTitleLabel.bottomAnchor, constant: verticalEdgeInset).isActive = true
         toDoDeadlineLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: horizontalEdgeInset).isActive = true
-        toDoDeadlineLabel.trailingAnchor.constraint(equalTo: toDoCheckBoxView.leadingAnchor, constant: -horizontalEdgeInset).isActive = true
+        toDoDeadlineLabel.trailingAnchor.constraint(equalTo: toDoCheckBoxButton.leadingAnchor, constant: -horizontalEdgeInset).isActive = true
         toDoDeadlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -horizontalEdgeInset).isActive = true
         
     }
     
-    func toggleToDo(isCompleted: Bool) {
+    func setToDoDeadline(deadline: Date?) {
         
-        toDoIsCompleted = isCompleted
-        
-    }
-    
-    func setToDoDeadline(deadline: String) {
-        
-        toDoDeadlineLabel.text = "Deadline " + deadline
+        if let newDeadline = deadline {
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d, yyyy, h:mm a"
+            
+            toDoDeadlineLabel.text = "Deadline: " + formatter.string(from: newDeadline)
+            
+        } else {
+            
+            toDoDeadlineLabel.text = "No Deadline"
+            
+        }
         
     }
     

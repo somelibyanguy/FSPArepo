@@ -84,6 +84,8 @@ class BouncyButton: UIButton {
 
 class BubbleButton: BouncyButton {
     
+    private var isShadowed: Bool = true
+    
     init(bubbleButtonImage: UIImage?) {
         
         super.init(bouncyButtonImage: bubbleButtonImage)
@@ -100,13 +102,27 @@ class BubbleButton: BouncyButton {
         
         super.layoutSubviews()
     
-        addShadowAndRoundCorners(cornerRadius: min(frame.width, frame.height)/2, shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 1.0))
+        if isShadowed {
+        
+            addShadowAndRoundCorners(cornerRadius: min(frame.width, frame.height)/2, shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 1.0))
+            
+        } else {
+            
+            addShadowAndRoundCorners(cornerRadius: min(frame.width, frame.height)/2, shadowOpacity: 0.0)
+            
+        }
+        
+    }
+    
+    func toggleShadow() {
+        
+        isShadowed = !isShadowed
         
     }
     
 }
 
-class ToggleButton: BubbleButton {
+final class ToggleButton: BubbleButton {
     
     private(set) var toggleState = false {
         
@@ -178,6 +194,105 @@ class ToggleButton: BubbleButton {
     @objc func toggle() {
         
         toggleState = !toggleState
+        
+    }
+    
+}
+
+final class CheckBoxButton: BouncyButton {
+    
+    private(set) var isChecked = false {
+        
+        willSet (newState) {
+            
+            if isChecked != newState {
+                
+                if newState { // Button is on
+                    
+                    UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 3,
+                                   options: .curveEaseIn, animations: {
+                    
+                                    self.setImage(UIImage.checkMarkIcon.withTintColor(self.checkMarkColor), for: .normal)
+                                    
+                    }, completion: nil)
+                    
+                } else { // Button is off
+                    
+                    UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 3,
+                                   options: .curveEaseOut, animations: {
+                    
+                                    self.setImage(nil, for: .normal)
+                                    
+                    }, completion: nil)
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    private var isShadowed: Bool = true
+    private var checkMarkColor: UIColor = .black
+    private let edgeInset: CGFloat = .getPercentageWidth(percentage: 2)
+    
+    convenience init() {
+        
+        self.init(checkMarkColor: nil)
+        
+    }
+    
+    init(checkMarkColor: UIColor?) {
+        
+        if let newCheckMarkColor = checkMarkColor { self.checkMarkColor = newCheckMarkColor }
+        
+        super.init(bouncyButtonImage: UIImage.checkMarkIcon.withTintColor(self.checkMarkColor))
+        configureButton()
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        
+        super.init(coder: aDecoder)
+        configureButton()
+        
+    }
+    
+    private func configureButton() {
+        
+        backgroundColor = .white
+        contentEdgeInsets = UIEdgeInsets(top: edgeInset/2, left: edgeInset/2, bottom: edgeInset/2, right: edgeInset/2)
+        setImage(nil, for: .normal)
+        addTarget(self, action: #selector(toggleCheck), for: .touchUpInside)
+        
+    }
+    
+    override func layoutSubviews() {
+        
+        super.layoutSubviews()
+    
+        if isShadowed {
+        
+            addShadowAndRoundCorners(cornerRadius: edgeInset, shadowColor: UIColor.darkGray, shadowOffset: CGSize(width: 0.0, height: 1.0))
+            
+        } else {
+            
+            addShadowAndRoundCorners(cornerRadius: edgeInset, shadowOpacity: 0.0)
+            
+        }
+        
+    }
+    
+    @objc func toggleCheck() {
+        
+        isChecked = !isChecked
+        
+    }
+    
+    func toggleShadow() {
+        
+        isShadowed = !isShadowed
         
     }
     
